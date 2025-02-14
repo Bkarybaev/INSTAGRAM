@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign In</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #833AB4, #E1306C, #FD1D1D, #F77737);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .signIn-container {
+      max-width: 400px;
+      padding: 2rem;
+      border-radius: 10px;
+      background-color: #ffffff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .signIn-container h2 {
+      margin-bottom: 1.5rem;
+      text-align: center;
+      color: #007bff;
+    }
+  </style>
+</head>
+<body>
+<div class="signIn-container">
+  <h2> Sign In </h2>
+  <form action="/auth/saveSingIn" method=Get>
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input type="email" id="email" name="email" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label for="password" class="form-label">Password</label>
+      <input type="password" id="password" name="password" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary w-100">Sign In</button>
+  </form>
+  <div th:if="${error}" class="alert alert-danger mt-3" th:text="${error}"></div>
+  <p class="text-center mt-3">Don't have an account? <a href="/auth/register"> Sign up </a></p>
+</div>
+</body>
+</html>
