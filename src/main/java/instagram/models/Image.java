@@ -9,6 +9,8 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+
+@ToString
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,7 +18,7 @@ public class Image {
 
     private String ImageUrl;
     @ToString.Exclude
-     @ManyToOne
+     @ManyToOne(fetch = FetchType.LAZY)
     private Post post;
     @ToString.Exclude
      @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)

@@ -14,4 +14,8 @@ public interface UserRepo {
     String saveUser(User user);
 
     Map<User, Map<UserInfo, Follower>> userProfile(Long id);
+
+    void updateUser(User userById);
+
+    User findByUserName(String name);
 }

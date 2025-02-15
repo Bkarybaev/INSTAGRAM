@@ -25,7 +25,7 @@ public class User {
     private String phoneNumber;
 
     @ToString.Exclude
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
     private UserInfo userInfo;
     @ToString.Exclude
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
@@ -34,7 +34,7 @@ public class User {
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
     private Comment comment;
     @ToString.Exclude
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<Post> posts;
     @ToString.Exclude
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)

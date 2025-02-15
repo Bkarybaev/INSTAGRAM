@@ -62,6 +62,25 @@
             padding: 10px;
             border-radius: 8px;
         }
+        .btn-primary {
+            background-color: #0095f6;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            background-color: #007acc;
+        }
+        .profile-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
     </style>
 </head>
 <body>
@@ -69,32 +88,41 @@
 <div class="container">
     <!-- Профиль маалыматы -->
     <div class="profile-header">
-        <img th:src="${userInfo.imageUrl}" alt="Profile Picture">
+        <img th:src="${userInfo?.imageUrl}" alt="Profile Picture">
         <div class="profile-info">
-            <h2 th:text="${user.username}"></h2>
-            <h3 th:text="${userInfo.fullName}"></h3>
+            <h2 th:text="${user?.username}"></h2>
+            <h3 th:text="${userInfo?.fullName}"></h3>
             <div class="stats">
+                <p><span th:text="${posts != null ? posts.size() : 0}"></span> posts</p>
                 <p><span th:text="${follower != null ? follower.subscribes.size() : 0}"></span> Followers</p>
                 <p><span th:text="${follower != null ? follower.subscriptions.size() : 0}"></span> Following</p>
-
+            </div>
+            <div class="profile-actions">
+                <a th:if="${user.id == currentUser.id}" th:href="@{/users/update-profile/{id}(id=${user.id})}" class="btn btn-primary">
+                    Edit Profile
+                </a>
+                <a th:if="${user.id == currentUser.id}" th:href="@{/post/add/{id}(id=${user.id})}" class="btn btn-primary">
+                    Add Post
+                </a>
             </div>
         </div>
     </div>
-
-    <!-- Постторду көрсөтүү -->
     <div class="posts">
         <div class="post" th:each="post : ${posts}">
-<!--            <img th:src="${post.images[0].imageUrl}"-->
-<!--                 alt="Post Image">-->
-
-
-            <h4 th:text="${post?.title}"></h4>
+            <a th:href="@{/post/{id}(id=${post.id})}">
+                <img th:src="@{${post.images[0]?.imageUrl}}" alt="Post Image">
+            </a>
+            <h4><a th:href="@{/post/{id}(id=${post.id})}" th:text="${post?.title}"></a></h4>
             <p th:text="${post?.description}"></p>
             <p><small th:text="${post?.createdAt}"></small></p>
-<!--            <p>❤️ <span th:text="${post?.likes.size()}"></span> Likes</p>-->
+
+            <!-- Like кнопкасы -->
+            <button class="like-btn" th:attr="data-post-id=${post.id}">
+                &#10084;&#65039;<span th:text="${post.likes.size()}"></span> Likes
+            </button>
         </div>
     </div>
-</div>
 
+</div>
 </body>
 </html>

@@ -14,4 +14,8 @@ public interface UserService {
     String saveUser(User user);
 
     Map<User, Map<UserInfo, Follower>> userProfile(Long id);
+
+    void updateUserProfile(Long id, User user, UserInfo userInfo);
+
+    User findByUsername(String name);
 }

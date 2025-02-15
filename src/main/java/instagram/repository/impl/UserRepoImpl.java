@@ -11,10 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -32,6 +29,7 @@ public class UserRepoImpl implements UserRepo {
 
     @Override
     public User getByEmail(String email) {
+
         return entityManager.createQuery("select u from User u where u.email = :email", User.class)
                 .setParameter("email", email)
                 .getSingleResult();
@@ -49,6 +47,8 @@ public class UserRepoImpl implements UserRepo {
             UserInfo userInfo = new UserInfo();
             user.setUserInfo(userInfo);
             user.setFollower(follower);
+            follower.setUser(user);
+            userInfo.setUser(user);
             userInfo.setImageUrl("https://cdn.vectorstock.com/i/1000v/66/13/default-avatar-profile-icon-social-media-user-vector-49816613.jpg");
             entityManager.persist(user);
             return "success";
@@ -61,10 +61,14 @@ public class UserRepoImpl implements UserRepo {
     public Map<User, Map<UserInfo, Follower>> userProfile(Long id) {
         User user = findUserById(id);
 
-        List<Post> sortedPosts = user.getPosts()
-                .stream()
-                .sorted(Comparator.comparing(Post::getCreatedAt).reversed())
+//        List<Post> sortedPosts = user.getPosts()
+//                .stream()
+//                .sorted(Comparator.reverseOrder())
+//                .collect(Collectors.toList());
+        List<Post> sortedPosts = user.getPosts().stream()
+                .sorted(Comparator.comparing(Post::getCreatedAt, Comparator.reverseOrder()))
                 .collect(Collectors.toList());
+
 
         user.setPosts(sortedPosts);
 
@@ -78,6 +82,18 @@ public class UserRepoImpl implements UserRepo {
         userProfile.put(user, profileDetails);
 
         return userProfile;
+    }
+
+    @Override
+    public void updateUser(User userById) {
+        entityManager.merge(userById);
+    }
+
+
+    @Override
+    public User findByUserName(String name) {
+        return entityManager.createQuery("select u from User u where u.username = :username",User.class)
+                .setParameter("username",name).getSingleResult();
     }
 
 }
