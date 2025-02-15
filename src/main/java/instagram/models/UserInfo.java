@@ -2,10 +2,7 @@ package instagram.models;
 
 import instagram.enums.Gender;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.stereotype.Repository;
 
 @Entity
@@ -23,7 +20,7 @@ public class UserInfo {
     @Enumerated(EnumType.STRING)
     private Gender gender;
     private String imageUrl;
-
+    @ToString.Exclude
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private User user;
 }

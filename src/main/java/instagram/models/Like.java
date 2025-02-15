@@ -1,10 +1,7 @@
 package instagram.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "likes")
@@ -16,13 +13,13 @@ public class Like {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private boolean isLike;
-
+    @ToString.Exclude
     @ManyToOne(cascade = CascadeType.ALL)
     private Post post;
-
+    @ToString.Exclude
     @ManyToOne
     private Comment comment;
-
+    @ToString.Exclude
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private User user;
 }

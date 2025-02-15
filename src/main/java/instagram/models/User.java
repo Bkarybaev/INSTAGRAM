@@ -24,21 +24,22 @@ public class User {
     private String email;
     private String phoneNumber;
 
+    @ToString.Exclude
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private UserInfo userInfo;
-
+    @ToString.Exclude
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
     private Follower follower;
-
+    @ToString.Exclude
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
     private Comment comment;
-
+    @ToString.Exclude
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private List<Post> posts;
-
+    @ToString.Exclude
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private List<Image> image;
-
+    @ToString.Exclude
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
     private Like like;
 
@@ -48,4 +49,6 @@ public class User {
         this.email = email;
         this.phoneNumber = phoneNumber;
     }
+
+
 }

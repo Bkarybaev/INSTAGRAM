@@ -8,14 +8,19 @@
     <style>
         body {
             background-color: #fafafa;
+            font-family: Arial, sans-serif;
         }
         .container {
             max-width: 900px;
             margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         .profile-header {
             display: flex;
-            align-items: center;
+            align-items: flex-end;
             gap: 20px;
             padding: 20px;
             border-bottom: 1px solid #ddd;
@@ -64,27 +69,29 @@
 <div class="container">
     <!-- Профиль маалыматы -->
     <div class="profile-header">
-        <img th:src='@{/images/{imageUrl}(imageUrl=${user.userInfo.imageUrl})}' alt="Profile Picture">
+        <img th:src="${userInfo.imageUrl}" alt="Profile Picture">
         <div class="profile-info">
-            <h2 th:text="${user.userInfo.fullName}"></h2>
-            <p th:text="${user.userInfo.biography}"></p>
+            <h2 th:text="${user.username}"></h2>
+            <h3 th:text="${userInfo.fullName}"></h3>
             <div class="stats">
-                <p><span th:text="${user.posts.size()}" ></span> Posts</p>
-                <p><span th:text="${user.follower.subscribes.size()}" ></span> Followers</p>
-                <p><span th:text="${user.follower.subscriptions.size()}" ></span> Following</p>
+                <p><span th:text="${follower != null ? follower.subscribes.size() : 0}"></span> Followers</p>
+                <p><span th:text="${follower != null ? follower.subscriptions.size() : 0}"></span> Following</p>
+
             </div>
         </div>
     </div>
 
-    <!-- Посттор -->
-    <h3 class="mt-4 text-center">User Posts</h3>
+    <!-- Постторду көрсөтүү -->
     <div class="posts">
-        <div class="post" th:each="post : ${user.posts}">
-            <img th:src="@{/images/{image}(image=${post.images[0].imageUrl})}" alt="Post Image">
-            <h4 th:text="${post.title}"></h4>
-            <p th:text="${post.description}"></p>
-            <p><small th:text="${post.createdAt}"></small></p>
-            <p>❤️ <span th:text="${post.likes.size()}"></span> Likes</p>
+        <div class="post" th:each="post : ${posts}">
+<!--            <img th:src="${post.images[0].imageUrl}"-->
+<!--                 alt="Post Image">-->
+
+
+            <h4 th:text="${post?.title}"></h4>
+            <p th:text="${post?.description}"></p>
+            <p><small th:text="${post?.createdAt}"></small></p>
+<!--            <p>❤️ <span th:text="${post?.likes.size()}"></span> Likes</p>-->
         </div>
     </div>
 </div>

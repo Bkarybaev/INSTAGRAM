@@ -1,10 +1,7 @@
 package instagram.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,13 +17,13 @@ public class Comment {
     private Long id;
     private String comment;
     private LocalDate createdAt;
-
+    @ToString.Exclude
     @ManyToOne
     private Post post;
-
+    @ToString.Exclude
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private User user;
-
+    @ToString.Exclude
     @OneToMany(mappedBy = "comment",cascade = CascadeType.ALL)
     private List<Like> likes;
 }

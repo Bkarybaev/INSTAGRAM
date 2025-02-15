@@ -1,13 +1,17 @@
 package instagram.service.impl;
 
 import instagram.exeptions.NullabelExeption;
+import instagram.models.Follower;
 import instagram.models.User;
+import instagram.models.UserInfo;
 import instagram.repository.UserRepo;
 import instagram.service.UserService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +40,12 @@ public class UserSerImpl implements UserService {
 //            throw new NullabelExeption("Username cannot be empty");
 //        }
         return userRepo.saveUser(user);
+    }
+
+    @Override
+
+    public Map<User, Map<UserInfo, Follower>> userProfile(Long id) {
+        return userRepo.userProfile(id);
     }
 
 

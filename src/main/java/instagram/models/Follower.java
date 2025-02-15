@@ -1,28 +1,28 @@
 package instagram.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "followers")
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Follower {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ElementCollection
-    private List<Long> subscribes = new ArrayList<>();
+    private List<Long> subscribes;
     @ElementCollection
-    private List<Long> subscriptions = new ArrayList<>();
+    private List<Long> subscriptions ;
 
-    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private User user;
 }

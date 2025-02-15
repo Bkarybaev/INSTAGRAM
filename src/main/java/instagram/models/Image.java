@@ -1,10 +1,7 @@
 package instagram.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "images")
@@ -18,8 +15,10 @@ public class Image {
     private Long id;
 
     private String ImageUrl;
+    @ToString.Exclude
      @ManyToOne
     private Post post;
+    @ToString.Exclude
      @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private User user;
 
