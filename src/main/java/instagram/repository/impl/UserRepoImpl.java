@@ -21,6 +21,7 @@ public class UserRepoImpl implements UserRepo {
     @PersistenceContext
     private final EntityManager entityManager;
     public static User user = null;
+    public static User user1 = null;
 
 
     @Override
@@ -52,6 +53,9 @@ public class UserRepoImpl implements UserRepo {
             userInfo.setUser(user);
             userInfo.setImageUrl("https://cdn.vectorstock.com/i/1000v/66/13/default-avatar-profile-icon-social-media-user-vector-49816613.jpg");
             entityManager.persist(user);
+            user1 = entityManager.createQuery("select u from User u where u.email = :email",User.class)
+                    .setParameter("email",user.getEmail())
+                    .getSingleResult();
             return "success";
         }
         return "error";

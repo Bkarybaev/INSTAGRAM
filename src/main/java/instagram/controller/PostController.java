@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/post")
@@ -27,9 +29,6 @@ public class PostController {
     @GetMapping("/{id}")
     public String getPostById(@PathVariable Long id, Model model) {
         Post post = postService.getPostById(id);
-        if (post == null) {
-            return "/main/index";
-        }
         model.addAttribute("post", post);
         model.addAttribute("userId", post.getUser().getId());
         return "post/postDetails";

@@ -51,9 +51,9 @@ public class PostRepoImpl implements PostRepo {
                 .getSingleResult();
 
         em.createNativeQuery("""
-    INSERT INTO images (imageurl, post_id, user_id)
-    VALUES (?, ?, ?)
-""")
+                            INSERT INTO images (imageurl, post_id, user_id)
+                            VALUES (?, ?, ?)
+                        """)
                 .setParameter(1, imageUrl.getImageUrl())
                 .setParameter(2, singleResult.getId())
                 .setParameter(3, userId)
@@ -64,13 +64,14 @@ public class PostRepoImpl implements PostRepo {
         Comment comment = new Comment();
         like.setComment(comment);
         comment.setPost(singleResult);
-        if (comment.getLikes() == null){
+        if (comment.getLikes() == null) {
             comment.setLikes(new ArrayList<>());
         }
+        like.setPost(singleResult);
+//        comment.getLikes().add(like);
         if (singleResult.getLikes() == null) {
             singleResult.setLikes(new ArrayList<>());
         }
-        singleResult.getLikes().add(like);
         em.persist(comment);
         em.persist(like);
 
@@ -78,16 +79,35 @@ public class PostRepoImpl implements PostRepo {
 
     @Override
     public void likePost(Long postId) {
-        Like like = em.createQuery("select l from Like l where l.post.id = :postId", Like.class)
-                .setParameter("postId", postId)
-                .getSingleResult();
-        if (like.getPost().getLikes() == null){
-        like.setUser(UserRepoImpl.user);
-            like.getPost().getLikes().add(like);
-        }else {
-            like.getPost().getLikes().remove(like);
-            like.setUser(null);
+
+            Post post = em.find(Post.class, postId);
+            User user = em.find(User.class, UserRepoImpl.user.getId());
+
+        if (user == null) {
+            user = em.find(User.class, UserRepoImpl.user1.getId());
         }
-        em.merge(like);
+
+        List<Like> likes = em.createQuery("select l from Like l where l.post.id = :postId", Like.class)
+                .setParameter("postId", postId)
+                .getResultList();
+
+        Like like = likes.isEmpty() ? null : likes.get(0);
+
+        if (like != null && em.contains(like)) {
+            post.getLikes().remove(like);
+            user.getLikes().remove(like);
+            em.remove(like);
+        } else {
+            like = new Like();
+            like.setUser(user);
+            like.setPost(post);
+            like.setLike(true);
+
+            post.getLikes().add(like);
+            user.getLikes().add(like);
+            em.persist(like);
+        }
+            em.merge(post);
+            em.merge(user);
     }
 }
