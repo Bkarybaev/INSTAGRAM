@@ -11,4 +11,6 @@ public interface PostService {
     Post getPostById(Long id);
 
     void savePost(Post post, Long userId, Image imageUrl);
+
+    void likePost(Long postId);
 }

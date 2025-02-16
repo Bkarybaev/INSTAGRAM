@@ -39,9 +39,10 @@ public class User {
     @ToString.Exclude
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private List<Image> image;
-    @ToString.Exclude
-    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
-    private Like like;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private Like likes;
 
     public User(String username, String password, String email, String phoneNumber) {
         this.username = username;

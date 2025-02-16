@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 public class UserRepoImpl implements UserRepo {
     @PersistenceContext
     private final EntityManager entityManager;
+    public static User user = null;
 
 
     @Override
@@ -30,10 +31,10 @@ public class UserRepoImpl implements UserRepo {
     @Override
     public User getByEmail(String email) {
 
-        return entityManager.createQuery("select u from User u where u.email = :email", User.class)
+        user = entityManager.createQuery("select u from User u where u.email = :email", User.class)
                 .setParameter("email", email)
                 .getSingleResult();
-
+        return user;
     }
 
     @Override
@@ -61,10 +62,6 @@ public class UserRepoImpl implements UserRepo {
     public Map<User, Map<UserInfo, Follower>> userProfile(Long id) {
         User user = findUserById(id);
 
-//        List<Post> sortedPosts = user.getPosts()
-//                .stream()
-//                .sorted(Comparator.reverseOrder())
-//                .collect(Collectors.toList());
         List<Post> sortedPosts = user.getPosts().stream()
                 .sorted(Comparator.comparing(Post::getCreatedAt, Comparator.reverseOrder()))
                 .collect(Collectors.toList());
@@ -74,7 +71,7 @@ public class UserRepoImpl implements UserRepo {
 
         UserInfo userInfo = user.getUserInfo();
         Follower follower = user.getFollower();
-        System.out.println(follower);
+
         Map<UserInfo, Follower> profileDetails = new HashMap<>();
         profileDetails.put(userInfo, follower);
 
@@ -92,8 +89,24 @@ public class UserRepoImpl implements UserRepo {
 
     @Override
     public User findByUserName(String name) {
-        return entityManager.createQuery("select u from User u where u.username = :username",User.class)
-                .setParameter("username",name).getSingleResult();
+        return entityManager.createQuery("select u from User u where u.username = :username", User.class)
+                .setParameter("username", name).getSingleResult();
+    }
+
+    @Override
+    public Map<Integer, Integer> findFollowersCounts(User user) {
+        User user1 = entityManager.find(User.class, user.getId());
+        int subscribes = (user1.getFollower().getSubscribes() != null) ? user1.getFollower().getSubscribes().size() : 0;
+        int subscriptions = (user1.getFollower().getSubscriptions() != null) ? user1.getFollower().getSubscriptions().size() : 0;
+
+        return Map.of(subscribes, subscriptions);
+    }
+
+    @Override
+    public List<User> search(String query) {
+        return entityManager.createQuery("select u from User u where u.username ilike :query", User.class)
+                .setParameter("query", query)
+                .getResultList();
     }
 
 }

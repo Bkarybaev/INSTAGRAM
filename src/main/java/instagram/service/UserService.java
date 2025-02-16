@@ -4,6 +4,7 @@ import instagram.models.Follower;
 import instagram.models.User;
 import instagram.models.UserInfo;
 
+import java.util.List;
 import java.util.Map;
 
 public interface UserService {
@@ -18,4 +19,8 @@ public interface UserService {
     void updateUserProfile(Long id, User user, UserInfo userInfo);
 
     User findByUsername(String name);
+
+    Map<Integer, Integer> findFollowersCounts(User user);
+
+    List<User> search(String query);
 }

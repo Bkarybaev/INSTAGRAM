@@ -4,6 +4,7 @@ import instagram.models.Image;
 import instagram.models.Post;
 import instagram.repository.PostRepo;
 import instagram.service.PostService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -29,5 +30,11 @@ public class PostSerImpl implements PostService {
     @Override
     public void savePost(Post post,Long userId, Image imageUrl) {
         postRepo.savePost(post,userId,imageUrl);
+    }
+
+    @Override
+    @Transactional
+    public void likePost(Long postId) {
+        postRepo.likePost(postId);
     }
 }

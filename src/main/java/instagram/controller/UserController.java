@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,14 +34,18 @@ public class UserController {
 
         User user = profileData.keySet().iterator().next();
         UserInfo userInfo = profileData.get(user).keySet().iterator().next();
-        Follower follower = profileData.get(user).get(userInfo);
+//        Follower follower = profileData.get(user).get(userInfo);
         List<Post> post = postService.getPostsByUserId(user.getId());
+        Map<Integer,Integer> followerCounts = userService.findFollowersCounts(user);
+        int followerCount1 = followerCounts.keySet().iterator().next();
+        int followerCount2 = followerCounts.values().iterator().next();
 
         User currentUser = userService.findByUsername(user.getUsername());
 
         model.addAttribute("user", user);
         model.addAttribute("userInfo", userInfo);
-        model.addAttribute("follower", follower);
+        model.addAttribute("followerSs", followerCount1);
+        model.addAttribute("followerNs",followerCount2);
         model.addAttribute("posts", post);
         model.addAttribute("currentUser", currentUser);
         return "userInfo/userProfile";
@@ -74,6 +79,40 @@ public class UserController {
         }
         return "redirect:/users/profile/" + userById.getId();
     }
+    @GetMapping("/searchByQuery")
+    public String searchByQuery( Model model) {
+        model.addAttribute("query" , "");
+        return "userInfo/search";
+    }
+
+    @GetMapping("/search")
+    public String search(@ModelAttribute("query") String query, Model model) {
+        List<User> users = userService.search(query);
+        model.addAttribute("users", users);
+        return "userInfo/search";
+    }
+    @GetMapping("/searchUserProfile/{userProfileId}")
+    public String searchUserProfile(@PathVariable("userProfileId") Long userId, Model model) {
+        Map<User, Map<UserInfo, Follower>> userMapMap = userService.userProfile(userId);
+
+        User user = userMapMap.keySet().iterator().next();
+        UserInfo userInfo = userMapMap.get(user).keySet().iterator().next();
+
+        List<Post> post = postService.getPostsByUserId(userId);
+
+        Map<Integer, Integer> followerCounts = userService.findFollowersCounts(user);
+        int followerCount1 = followerCounts.keySet().iterator().next();
+        int followerCount2 = followerCounts.values().iterator().next();
+
+        model.addAttribute("user", user);
+        model.addAttribute("userInfo", userInfo);
+        model.addAttribute("followerSs", followerCount1);
+        model.addAttribute("followerNs", followerCount2);
+        model.addAttribute("posts", post);
+
+        return "userInfo/searchUserProfile";
+    }
+
 
 
 }

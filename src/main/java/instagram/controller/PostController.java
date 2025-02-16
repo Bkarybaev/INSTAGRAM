@@ -4,6 +4,7 @@ import instagram.models.Image;
 import instagram.models.Like;
 import instagram.models.Post;
 import instagram.models.User;
+import instagram.service.LikeService;
 import instagram.service.PostService;
 import instagram.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import java.util.HashSet;
 public class PostController {
     private final UserService userService;
     private final PostService postService;
+    private final LikeService likeService;
 
 
     @GetMapping("/{id}")
@@ -31,6 +33,16 @@ public class PostController {
         model.addAttribute("post", post);
         model.addAttribute("userId", post.getUser().getId());
         return "post/postDetails";
+    }
+    @GetMapping("/searchUserProf/{id}")
+    public String getsSearchPostById(@PathVariable Long id, Model model) {
+        Post post = postService.getPostById(id);
+        if (post == null) {
+            return "/main/index";
+        }
+        model.addAttribute("post", post);
+        model.addAttribute("userId", post.getUser().getId());
+        return "post/searchPostUser";
     }
 
     @GetMapping("/add/{userId}")
@@ -46,14 +58,19 @@ public class PostController {
     @PostMapping("/savePost/{id}")
     public String savePost( @PathVariable("id") Long userId, @ModelAttribute("imageUrl") Image imageUrl,@ModelAttribute Post post ) {
         User currentUser = userService.getUserById(userId);
-//        imageUrl.setUser(userService.getUserById(currentUser.getId()));
-//        imageUrl.setPost(post);
-//        post.setImages(new ArrayList<>());
-//        post.getImages().add(imageUrl);
-
         postService.savePost(post,currentUser.getId(),imageUrl);
         return "redirect:/users/profile/" + currentUser.getId();
     }
+
+    @PostMapping("/{postId}/like")
+    public String likePost(@PathVariable Long postId) {
+        postService.likePost(postId);
+        return "redirect:/post/" + postId;
+    }
+
+
+
+
 
 
 }

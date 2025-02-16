@@ -18,17 +18,7 @@ public class UserInfoRepoImpl implements UserInfoRepo {
     @Override
     public String updateUserInfo(UserInfo userInfo1) {
         UserInfo userInfo = entityManager.find(UserInfo.class, userInfo1.getId());
-        if (userInfo != null) {
-            if (!userInfo.getImageUrl().equalsIgnoreCase(userInfo1.getImageUrl())) {
-                userInfo.setImageUrl(userInfo1.getImageUrl());
-            }
-            if (userInfo.getGender() != userInfo1.getGender()) {
-                userInfo.setGender(userInfo1.getGender());
-            }
-            if (!userInfo.getBiography().equalsIgnoreCase(userInfo1.getBiography())) {
-                userInfo.setBiography(userInfo1.getBiography());
-            }
-        }
+        entityManager.merge(userInfo);
         return "success";
     }
 

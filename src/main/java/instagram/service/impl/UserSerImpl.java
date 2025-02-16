@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -88,6 +89,19 @@ public class UserSerImpl implements UserService {
             throw new NullabelExeption("Username cannot be empty");
         }
         return userRepo.findByUserName(name);
+    }
+
+    @Override
+    public Map<Integer, Integer> findFollowersCounts(User user) {
+        return userRepo.findFollowersCounts(user);
+    }
+
+    @Override
+    public List<User> search(String query) {
+        if (query == null || query.isEmpty()) {
+            throw new NullabelExeption("Query cannot be empty");
+        }
+        return userRepo.search(query);
     }
 
 

@@ -32,7 +32,7 @@
 <body>
 
 <div class="container">
-  <a th:href="@{/users/profile/{id}(id=${userId})}" class="btn btn-secondary mb-3">Back to Profile</a>
+  <a th:href="@{/users/searchUserProfile/{id}(id=${userId})}" class="btn btn-secondary mb-3">Back to Profile</a>
 
   <div class="card">
     <div th:if="${post.images != null and post.images.size() > 0}">
@@ -44,11 +44,9 @@
       <p><small th:text="${post.createdAt}"></small></p>
 
       <!-- Лайк баскычы -->
-      <form th:action="@{/post/{postId}/like(postId=${post.id})}" method="post">
-        <button type="submit">
-          &#10084;&#65039;  <span th:text="${post.likes.size()}"></span> Likes
-        </button>
-      </form>
+      <button class="like-btn" th:attr="data-post-id=${post.id}">
+        &#10084;&#65039; <span th:text="${post.likes.size()}"></span> Likes
+      </button>
     </div>
   </div>
 

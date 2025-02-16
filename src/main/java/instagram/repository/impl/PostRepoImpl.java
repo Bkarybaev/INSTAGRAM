@@ -1,8 +1,6 @@
 package instagram.repository.impl;
 
-import instagram.models.Image;
-import instagram.models.Post;
-import instagram.models.User;
+import instagram.models.*;
 import instagram.repository.PostRepo;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -12,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -61,7 +60,34 @@ public class PostRepoImpl implements PostRepo {
                 .executeUpdate();
 
 
+        Like like = new Like();
+        Comment comment = new Comment();
+        like.setComment(comment);
+        comment.setPost(singleResult);
+        if (comment.getLikes() == null){
+            comment.setLikes(new ArrayList<>());
+        }
+        if (singleResult.getLikes() == null) {
+            singleResult.setLikes(new ArrayList<>());
+        }
+        singleResult.getLikes().add(like);
+        em.persist(comment);
+        em.persist(like);
 
+    }
 
+    @Override
+    public void likePost(Long postId) {
+        Like like = em.createQuery("select l from Like l where l.post.id = :postId", Like.class)
+                .setParameter("postId", postId)
+                .getSingleResult();
+        if (like.getPost().getLikes() == null){
+        like.setUser(UserRepoImpl.user);
+            like.getPost().getLikes().add(like);
+        }else {
+            like.getPost().getLikes().remove(like);
+            like.setUser(null);
+        }
+        em.merge(like);
     }
 }

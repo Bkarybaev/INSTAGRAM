@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 @Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class UserInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
