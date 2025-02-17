@@ -22,5 +22,6 @@ public class Like {
     private Comment comment;
     @ToString.Exclude
     @ManyToOne
+    @JoinColumn
     private User user;
 }

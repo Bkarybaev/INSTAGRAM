@@ -79,35 +79,45 @@ public class PostRepoImpl implements PostRepo {
 
     @Override
     public void likePost(Long postId) {
-
-            Post post = em.find(Post.class, postId);
-            User user = em.find(User.class, UserRepoImpl.user.getId());
+        Post post = em.find(Post.class, postId);
+        User user = em.find(User.class, UserRepoImpl.user.getId());
 
         if (user == null) {
             user = em.find(User.class, UserRepoImpl.user1.getId());
         }
 
-        List<Like> likes = em.createQuery("select l from Like l where l.post.id = :postId", Like.class)
+
+        List<Like> likes = em.createQuery("SELECT l FROM Like l WHERE l.post.id = :postId AND l.user.id = :userId", Like.class)
                 .setParameter("postId", postId)
+                .setParameter("userId", user.getId())
                 .getResultList();
 
         Like like = likes.isEmpty() ? null : likes.get(0);
 
-        if (like != null && em.contains(like)) {
-            post.getLikes().remove(like);
-            user.getLikes().remove(like);
-            em.remove(like);
+        if (like != null) {
+            if (em.contains(like)) {
+                user.getLikes().remove(like);
+                post.getLikes().remove(like);
+                em.remove(like);
+            }
         } else {
             like = new Like();
+            if (user.getLikes() == null) {
+                user.setLikes(new ArrayList<>());
+            }
+            user.getLikes().add(like);
             like.setUser(user);
             like.setPost(post);
             like.setLike(true);
 
+            if (post.getLikes() == null) {
+                post.setLikes(new ArrayList<>());
+            }
             post.getLikes().add(like);
-            user.getLikes().add(like);
             em.persist(like);
         }
-            em.merge(post);
-            em.merge(user);
+
+        em.merge(post);
+        em.merge(user);
     }
 }

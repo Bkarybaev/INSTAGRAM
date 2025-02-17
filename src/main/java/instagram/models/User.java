@@ -40,7 +40,11 @@ public class User {
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private List<Image> image;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @ToString.Exclude
+    @OneToMany(mappedBy = "user",
+            cascade = CascadeType.REMOVE,
+            fetch = FetchType.EAGER,
+    orphanRemoval = true)
     private List<Like> likes;
 
     public User(String username, String password, String email, String phoneNumber) {
