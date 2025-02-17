@@ -1,6 +1,7 @@
 package instagram.controller;
 
 import instagram.models.*;
+import instagram.repository.impl.UserRepoImpl;
 import instagram.service.ImageService;
 import instagram.service.PostService;
 import instagram.service.UserInfoService;
@@ -34,7 +35,6 @@ public class UserController {
 
         User user = profileData.keySet().iterator().next();
         UserInfo userInfo = profileData.get(user).keySet().iterator().next();
-//        Follower follower = profileData.get(user).get(userInfo);
         List<Post> post = postService.getPostsByUserId(user.getId());
         Map<Integer,Integer> followerCounts = userService.findFollowersCounts(user);
         int followerCount1 = followerCounts.keySet().iterator().next();
@@ -104,13 +104,33 @@ public class UserController {
         int followerCount1 = followerCounts.keySet().iterator().next();
         int followerCount2 = followerCounts.values().iterator().next();
 
+        User currentUser = userService.getUserById(UserRepoImpl.user.getId());
+        if (currentUser == null) {
+            currentUser = userService.getUserById(UserRepoImpl.user1.getId());
+        }
+
+        Map<User, Map<UserInfo, Follower>> userMapMap1 = userService.userProfile(currentUser.getId());
+        UserInfo userInfoProf = userMapMap1.keySet().iterator().next().getUserInfo();
+
+
         model.addAttribute("user", user);
         model.addAttribute("userInfo", userInfo);
+        model.addAttribute("userInfoProf", userInfoProf);
         model.addAttribute("followerSs", followerCount1);
         model.addAttribute("followerNs", followerCount2);
         model.addAttribute("posts", post);
 
         return "userInfo/searchUserProfile";
+    }
+
+
+    @GetMapping("/myProfile")
+    public String myProfile() {
+        Long id = UserRepoImpl.user.getId();
+        if (id == null) {
+            id = UserRepoImpl.user1.getId();
+        }
+        return "redirect:/users/profile/" + id;
     }
 
 

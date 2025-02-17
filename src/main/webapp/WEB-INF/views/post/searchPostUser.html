@@ -44,7 +44,7 @@
       <p><small th:text="${post.createdAt}"></small></p>
 
       <!-- Лайк баскычы -->
-      <form th:action="@{/post/{postId}/like(postId=${post.id})}" method="post">
+      <form th:action="@{/post/{postId}/likeSearch(postId=${post.id})}" method="post">
         <button type="submit">
           &#10084;&#65039;  <span th:text="${post.likes.size()}"></span> Likes
         </button>
@@ -75,4 +75,3 @@
 
 </body>
 </html>
->

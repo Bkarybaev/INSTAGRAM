@@ -20,13 +20,7 @@
       object-fit: cover;
       border-radius: 10px;
     }
-    .like-btn {
-      background: none;
-      border: none;
-      font-size: 24px;
-      cursor: pointer;
-      color: red;
-    }
+
   </style>
 </head>
 <body>
@@ -58,15 +52,16 @@
     <ul class="list-group">
       <li class="list-group-item" th:each="comment : ${post.comments}">
         <strong th:text="${comment.user.username}"></strong>:
-        <span th:text="${comment.text}"></span>
+        <span th:text="${comment.commentText}"></span>
+        <span th:text="${comment.createdAt}"></span>
       </li>
     </ul>
 
     <!-- Жаңы комментарий кошуу -->
-    <form th:action="@{/post/{id}/comment(id=${post.id})}" method="post" class="mt-3">
+    <form th:action="@{/post/{id}/comment(id=${post.id})}" method="post">
       <div class="mb-3">
         <label for="commentText" class="form-label">Add a comment</label>
-        <input type="text" class="form-control" id="commentText" name="text" required>
+        <input type="text" class="form-control" id="commentText" name="commentText" required>
       </div>
       <button type="submit" class="btn btn-primary">Comment</button>
     </form>

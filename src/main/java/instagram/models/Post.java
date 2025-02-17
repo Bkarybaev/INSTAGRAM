@@ -23,7 +23,7 @@ public class Post {
     private LocalDate createdAt;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "post",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<Comment> comments;
     @ToString.Exclude
     @ManyToOne(cascade = CascadeType.ALL)

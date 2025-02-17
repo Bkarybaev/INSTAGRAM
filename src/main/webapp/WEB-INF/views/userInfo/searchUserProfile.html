@@ -75,11 +75,18 @@
             <p th:text="${userInfo?.fullName}"></p>
             <p th:text="${userInfo?.biography}"></p>
             <p th:text="${userInfo?.gender}"></p>
+            <p th:text="${user?.phoneNumber}"></p>
 
             <div class="stats">
                 <p><span th:text="${posts != null ? posts.size() : 0}"></span> posts</p>
                 <p><span th:text="${followerSs != null ? followerSs : 0}"></span> Followers</p>
                 <p><span th:text="${followerNs != null ? followerNs : 0}"></span> Following</p>
+            </div>
+            <div style="position: absolute; top: 20px; right: 300px;">
+                <a th:href="@{/users/myProfile}">
+                    <img th:src="${userInfoProf?.imageUrl}" alt="Profile"
+                         style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #e1306c; object-fit: cover;">
+                </a>
             </div>
         </div>
     </div>

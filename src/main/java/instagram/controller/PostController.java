@@ -1,9 +1,9 @@
 package instagram.controller;
 
-import instagram.models.Image;
-import instagram.models.Like;
-import instagram.models.Post;
-import instagram.models.User;
+import instagram.models.*;
+import instagram.repository.impl.UserInfoRepoImpl;
+import instagram.repository.impl.UserRepoImpl;
+import instagram.service.CommentService;
 import instagram.service.LikeService;
 import instagram.service.PostService;
 import instagram.service.UserService;
@@ -24,6 +24,26 @@ public class PostController {
     private final UserService userService;
     private final PostService postService;
     private final LikeService likeService;
+    private final CommentService commentService;
+//
+//    @GetMapping("/comment")
+//    public String comment(Model model) {
+//        model.addAttribute("commentText", "");
+//        return "post/postDetails";
+//    }
+
+    @PostMapping("/{postId}/comment")
+    public String comment(@PathVariable Long postId,@RequestParam("commentText") String text) {
+        Comment comment = new Comment();
+        comment.setCommentText(text);
+        Post postById = postService.getPostById(postId);
+        User user = userService.getUserById(UserRepoImpl.user.getId());
+        if (user == null) {
+            user = userService.getUserById(UserRepoImpl.user1.getId());
+        }
+        commentService.save(user.getId(),postById,comment);
+        return "redirect:/post/" + postById.getId();
+    }
 
 
     @GetMapping("/{id}")
@@ -65,6 +85,11 @@ public class PostController {
     public String likePost(@PathVariable Long postId) {
         postService.likePost(postId);
         return "redirect:/post/" + postId;
+    }
+    @PostMapping("/{postId}/likeSearch")
+    public String likePostSearch(@PathVariable Long postId) {
+        postService.likePost(postId);
+        return "redirect:/post/searchUserProf/" + postId;
     }
 
 
