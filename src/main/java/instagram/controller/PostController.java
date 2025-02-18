@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -25,15 +26,43 @@ public class PostController {
     private final PostService postService;
     private final LikeService likeService;
     private final CommentService commentService;
-//
-//    @GetMapping("/comment")
-//    public String comment(Model model) {
-//        model.addAttribute("commentText", "");
-//        return "post/postDetails";
-//    }
+
+    @PostMapping("/comment/{commentId}/like")
+    public String commentLike(@PathVariable Long commentId) {
+       Post post = postService.getPostByCommentId(commentId);
+        User user = userService.getUserById(UserRepoImpl.user.getId());
+        if (user == null) {
+            user = userService.getUserById(UserRepoImpl.user1.getId());
+        }
+        likeService.likeComment(commentId,user);
+        return "redirect:/post/" + post.getId();
+    }
+    @PostMapping("/commentSearch/{commentId}/like")
+    public String commentLikeSearch(@PathVariable Long commentId) {
+       Post post = postService.getPostByCommentId(commentId);
+        User user = userService.getUserById(UserRepoImpl.user.getId());
+        if (user == null) {
+            user = userService.getUserById(UserRepoImpl.user1.getId());
+        }
+        likeService.likeComment(commentId,user);
+        return "redirect:/post/searchUserProf/" + post.getId();
+    }
 
     @PostMapping("/{postId}/comment")
     public String comment(@PathVariable Long postId,@RequestParam("commentText") String text) {
+        commentariySerarch(postId, text);
+
+        Post postById = postService.getPostById(postId);
+        return "redirect:/post/" + postById.getId();
+    }
+
+    @PostMapping("/{postId}/commentSearch")
+    public String commentSearch(@PathVariable("postId") Long postId,@RequestParam("text") String text) {
+        commentariySerarch(postId, text);
+        return "redirect:/post/searchUserProf/" + postId;
+    }
+
+    private void commentariySerarch(@PathVariable("postId") Long postId, @RequestParam("commentText") String text) {
         Comment comment = new Comment();
         comment.setCommentText(text);
         Post postById = postService.getPostById(postId);
@@ -42,25 +71,27 @@ public class PostController {
             user = userService.getUserById(UserRepoImpl.user1.getId());
         }
         commentService.save(user.getId(),postById,comment);
-        return "redirect:/post/" + postById.getId();
     }
 
 
     @GetMapping("/{id}")
     public String getPostById(@PathVariable Long id, Model model) {
         Post post = postService.getPostById(id);
+       List<Comment> comments = commentService.getCommentsByPostId(post.getId());
+
         model.addAttribute("post", post);
         model.addAttribute("userId", post.getUser().getId());
+        model.addAttribute("comments", comments);
         return "post/postDetails";
     }
     @GetMapping("/searchUserProf/{id}")
     public String getsSearchPostById(@PathVariable Long id, Model model) {
         Post post = postService.getPostById(id);
-        if (post == null) {
-            return "/main/index";
-        }
+        List<Comment> comments = commentService.getCommentsByPostId(post.getId());
+
         model.addAttribute("post", post);
         model.addAttribute("userId", post.getUser().getId());
+        model.addAttribute("comments", comments);
         return "post/searchPostUser";
     }
 

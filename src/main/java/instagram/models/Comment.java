@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -11,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
+@ToString
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,14 +20,14 @@ public class Comment {
     private String commentText;
     private LocalDate createdAt;
     @ToString.Exclude
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Post post;
     @ToString.Exclude
-    @OneToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private User user;
     @ToString.Exclude
-    @OneToMany(mappedBy = "comment",cascade = CascadeType.ALL)
-    private List<Like> likes;
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.REMOVE,fetch = FetchType.EAGER,orphanRemoval = true)
+    private List<Like> likes = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {

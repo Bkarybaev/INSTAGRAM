@@ -138,8 +138,8 @@
         <div class="form-group">
             <label for="gender">Gender:</label>
             <select id="gender" name="gender">
-                <option value="MALE" th:selected="${userInfo.gender == 'MALE'}">Male</option>
-                <option value="FEMALE" th:selected="${userInfo.gender == 'FEMALE'}">Female</option>
+                <option value="MALE" th:selected="${userInfo.gender?.name() == 'MALE'}">Male</option>
+                <option value="FEMALE" th:selected="${userInfo.gender?.name() == 'FEMALE'}">Female</option>
             </select>
         </div>
 

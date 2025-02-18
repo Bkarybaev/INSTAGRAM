@@ -1,5 +1,6 @@
 package instagram.service.impl;
 
+import instagram.exeptions.NullComent;
 import instagram.models.Image;
 import instagram.models.Post;
 import instagram.repository.PostRepo;
@@ -36,5 +37,13 @@ public class PostSerImpl implements PostService {
     @Transactional
     public void likePost(Long postId) {
         postRepo.likePost(postId);
+    }
+
+    @Override
+    public Post getPostByCommentId(Long commentId) {
+        if (commentId == null) {
+           throw new NullComent("commentId is null");
+        }
+        return postRepo.getPostByCommentId(commentId);
     }
 }

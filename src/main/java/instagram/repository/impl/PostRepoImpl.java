@@ -4,6 +4,8 @@ import instagram.models.*;
 import instagram.repository.PostRepo;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -81,19 +83,14 @@ public class PostRepoImpl implements PostRepo {
     public void likePost(Long postId) {
         Post post = em.find(Post.class, postId);
         User user = em.find(User.class, UserRepoImpl.user.getId());
-
         if (user == null) {
             user = em.find(User.class, UserRepoImpl.user1.getId());
         }
-
-
-        List<Like> likes = em.createQuery("SELECT l FROM Like l WHERE l.post.id = :postId AND l.user.id = :userId", Like.class)
+        List<Like> likes = em.createQuery("select l from Like l where l.post.id = :postId and l.user.id = :userId", Like.class)
                 .setParameter("postId", postId)
                 .setParameter("userId", user.getId())
                 .getResultList();
-
         Like like = likes.isEmpty() ? null : likes.get(0);
-
         if (like != null) {
             if (em.contains(like)) {
                 user.getLikes().remove(like);
@@ -119,5 +116,14 @@ public class PostRepoImpl implements PostRepo {
 
         em.merge(post);
         em.merge(user);
+    }
+
+
+    @Override
+    public Post getPostByCommentId(Long commentId) {
+        return em.createQuery("select c.post from Comment c where c.id = :commentId", Post.class)
+                .setParameter("commentId",commentId)
+                .getSingleResult();
+
     }
 }

@@ -8,6 +8,8 @@ import instagram.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CommentSerImpl implements CommentService {
@@ -22,5 +24,10 @@ public class CommentSerImpl implements CommentService {
         }
         commentRepo.save(userId,post,comment);
 
+    }
+
+    @Override
+    public List<Comment> getCommentsByPostId(Long id) {
+        return commentRepo.getCommentsByPostId(id);
     }
 }

@@ -31,8 +31,8 @@ public class User {
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
     private Follower follower;
     @ToString.Exclude
-    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
-    private Comment comment;
+    @OneToMany(mappedBy = "user",cascade = {CascadeType.MERGE,CascadeType.REMOVE},fetch = FetchType.EAGER)
+    private List<Comment> comment;
     @ToString.Exclude
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<Post> posts;

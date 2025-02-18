@@ -13,4 +13,6 @@ public interface PostRepo {
     void savePost(Post post,Long userId, Image imageUrl);
 
     void likePost(Long postId);
+
+    Post getPostByCommentId(Long commentId);
 }
