@@ -104,5 +104,10 @@ public class UserSerImpl implements UserService {
         return userRepo.search(query);
     }
 
+    @Override
+    public void saveUserFollower(User currentUser, User profileUser) {
+        userRepo.saveUserFollower(currentUser,profileUser);
+    }
+
 
 }

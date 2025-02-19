@@ -98,6 +98,24 @@
         .search-bar button {
             margin-left: 10px;
         }
+        .see-all-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .see-all-btn {
+            display: inline-block;
+            background-color: #0095f6;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+        .see-all-btn:hover {
+            background-color: #007acc;
+        }
     </style>
 </head>
 <body>
@@ -109,6 +127,9 @@
             <input type="text" name="query" id="query" placeholder="Search users..." required>
             <button type="submit" class="btn btn-primary">Search</button>
         </form>
+    </div>
+    <div class="see-all-container">
+        <a href="/post/all" class="see-all-btn">See All Posts</a>
     </div>
     <!-- Профиль маалыматы -->
     <div class="profile-header">

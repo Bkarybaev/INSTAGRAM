@@ -78,10 +78,17 @@
             <p th:text="${user?.phoneNumber}"></p>
 
             <div class="stats">
-                <p><span th:text="${posts != null ? posts.size() : 0}"></span> posts</p>
+                <p><span th:text="${posts != null ? posts?.size() : 0}"></span> posts</p>
                 <p><span th:text="${followerSs != null ? followerSs : 0}"></span> Followers</p>
                 <p><span th:text="${followerNs != null ? followerNs : 0}"></span> Following</p>
             </div>
+
+            <form th:action="@{/users/{userId}/subscribe(userId=${userInfoSub?.id})}" method="post">
+                <button type="submit" class="btn btn-primary"
+                        th:text="${isSubscribed ? 'subscription' : 'Subscribe'}">
+                </button>
+            </form>
+
             <div style="position: absolute; top: 20px; right: 300px;">
                 <a th:href="@{/users/myProfile}">
                     <img th:src="${userInfoProf?.imageUrl}" alt="Profile"

@@ -54,14 +54,26 @@
         <strong th:text="${comment?.user?.username ?: 'N/A'}"></strong>
         <span th:text="${comment?.commentText ?: 'No Comment'}"></span>
         <span th:text="${comment?.createdAt ?: 'Unknown Date'}"></span>
+
         <!-- Лайк баскычы -->
         <form th:action="@{/post/comment/{commentId}/like(commentId=${comment?.id})}" method="post">
           <button type="submit" class="btn btn-outline-danger btn-sm">
             &#10084;&#65039; <span th:text="${comment?.likes?.size() ?: 0}"></span>
           </button>
         </form>
+
+        <!-- Delete Comment (Эгер активдүү колдонуучу комментарийдин ээси болсо гана көрсөтүлөт) -->
+        <form th:if="${userId == comment?.user?.id}"
+              th:action="@{/post/comment/{commentId}/delete(commentId=${comment?.id})}"
+              method="post"
+              style="display:inline;">
+          <button type="submit" class="btn btn-outline-danger btn-sm">
+            &#128465; Delete
+          </button>
+        </form>
       </li>
     </ul>
+
 
     <!-- Жаңы комментарий кошуу -->
     <form th:action="@{/post/{id}/comment(id=${post?.id})}" method="post">

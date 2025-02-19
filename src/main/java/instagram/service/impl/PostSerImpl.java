@@ -46,4 +46,9 @@ public class PostSerImpl implements PostService {
         }
         return postRepo.getPostByCommentId(commentId);
     }
+
+    @Override
+    public List<Post> getAll() {
+        return postRepo.getAll();
+    }
 }

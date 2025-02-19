@@ -17,10 +17,10 @@ public class Follower {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ElementCollection
-    private List<Long> subscribes;
-    @ElementCollection
-    private List<Long> subscriptions ;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<Long> subscribes = new ArrayList<>();
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<Long> subscriptions = new ArrayList<>();
 
     @ToString.Exclude
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)

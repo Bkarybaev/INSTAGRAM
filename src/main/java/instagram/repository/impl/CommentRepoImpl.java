@@ -39,4 +39,17 @@ public class CommentRepoImpl implements CommentRepo {
                 .setParameter("id",id)
                 .getResultList();
     }
+
+    @Override
+    public Comment getCommentById(Long commentId) {
+        return entityManager.find(Comment.class, commentId);
+    }
+
+    @Override
+    public void deletedComment(Long id) {
+        Comment comment = entityManager.find(Comment.class, id);
+        if (comment != null) {
+            entityManager.remove(comment);
+        }
+    }
 }

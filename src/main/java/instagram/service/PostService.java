@@ -15,4 +15,6 @@ public interface PostService {
     void likePost(Long postId);
 
     Post getPostByCommentId(Long commentId);
+
+    List<Post> getAll();
 }

@@ -113,4 +113,27 @@ public class UserRepoImpl implements UserRepo {
                 .getResultList();
     }
 
+    @Override
+    @Transactional
+    public void saveUserFollower(User currentUser, User profileUser) {
+
+            currentUser = entityManager.find(User.class, currentUser.getId());
+            profileUser = entityManager.find(User.class, profileUser.getId());
+
+            List<Long> subscribes = profileUser.getFollower().getSubscribes();
+            List<Long> subscriptions = currentUser.getFollower().getSubscriptions();
+
+            boolean isSubscribed = subscribes.contains(currentUser.getId());
+
+            if (!isSubscribed) {
+                subscribes.add(currentUser.getId());
+                subscriptions.add(profileUser.getId());
+            } else {
+                subscribes.remove(currentUser.getId());
+                subscriptions.remove(profileUser.getId());
+            }
+            entityManager.merge(profileUser);
+            entityManager.merge(currentUser);
+    }
+
 }

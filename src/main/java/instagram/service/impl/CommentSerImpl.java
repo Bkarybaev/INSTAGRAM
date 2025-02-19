@@ -30,4 +30,17 @@ public class CommentSerImpl implements CommentService {
     public List<Comment> getCommentsByPostId(Long id) {
         return commentRepo.getCommentsByPostId(id);
     }
+
+    @Override
+    public Comment getCommentById(Long commentId) {
+        if (commentId == null) {
+            throw new NullComent("id is null");
+        }
+        return commentRepo.getCommentById(commentId);
+    }
+
+    @Override
+    public void deletedComment(Long id) {
+        commentRepo.deletedComment(id);
+    }
 }

@@ -23,4 +23,6 @@ public interface UserRepo {
     Map<Integer, Integer> findFollowersCounts(User user);
 
     List<User> search(String query);
+
+    void saveUserFollower(User currentUser, User profileUser);
 }

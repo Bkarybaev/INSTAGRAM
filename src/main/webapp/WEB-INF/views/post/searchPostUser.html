@@ -66,6 +66,15 @@
             &#10084;&#65039; <span th:text="${comment?.likes?.size() ?: 0}"></span>
           </button>
         </form>
+        <!-- Delete Comment (Эгер активдүү колдонуучу комментарийдин ээси болсо гана көрсөтүлөт) -->
+        <form th:if="${currentUserId == comment?.user?.id}"
+              th:action="@{/post/commentSearch/{commentId}/delete(commentId=${comment?.id})}"
+              method="post"
+              style="display:inline;">
+          <button type="submit" class="btn btn-outline-danger btn-sm">
+            &#128465; Delete
+          </button>
+        </form>
       </li>
     </ul>
 

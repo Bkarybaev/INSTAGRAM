@@ -70,7 +70,6 @@ public class PostRepoImpl implements PostRepo {
             comment.setLikes(new ArrayList<>());
         }
         like.setPost(singleResult);
-//        comment.getLikes().add(like);
         if (singleResult.getLikes() == null) {
             singleResult.setLikes(new ArrayList<>());
         }
@@ -125,5 +124,10 @@ public class PostRepoImpl implements PostRepo {
                 .setParameter("commentId",commentId)
                 .getSingleResult();
 
+    }
+
+    @Override
+    public List<Post> getAll() {
+        return em.createQuery("select p from Post p", Post.class).getResultList();
     }
 }
