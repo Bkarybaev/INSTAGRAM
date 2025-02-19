@@ -131,6 +131,13 @@
         .like-btn:hover {
             color: #c72c58;
         }
+        .post p {
+            color: #555;
+        }
+        .tagged-users {
+            font-size: 14px;
+            color: #666;
+        }
     </style>
 </head>
 <body>
@@ -152,6 +159,18 @@
                 &#10084;&#65039;<span th:text="${post.likes.size()}"></span> Likes
             </button>
         </div>
+<!--        todo jany koshuldu-->
+        <!-- Посттун автору -->
+        <p><strong>Author:</strong> <span th:text="${post.author.username}"></span></p>
+
+        <!-- Белгиленген (tagged) колдонуучулар -->
+        <p class="tagged-users">
+            <strong>Tagged:</strong>
+            <span th:each="user, iterStat : ${post.taggedUsers}">
+                <span th:text="${user.username}"></span><span th:if="${!iterStat.last}">, </span>
+            </span>
+        </p>
+<!--        todo-->
     </div>
 
 </div>

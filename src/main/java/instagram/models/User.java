@@ -3,6 +3,7 @@ package instagram.models;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -36,6 +37,11 @@ public class User {
     @ToString.Exclude
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<Post> posts;
+
+    @ToString.Exclude
+    @ManyToMany(mappedBy = "taggedUsers")
+    private List<Post> taggedPosts = new ArrayList<>();
+
     @ToString.Exclude
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private List<Image> image;

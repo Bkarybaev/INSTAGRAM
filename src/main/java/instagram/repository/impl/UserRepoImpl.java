@@ -136,4 +136,16 @@ public class UserRepoImpl implements UserRepo {
             entityManager.merge(currentUser);
     }
 
+    @Override
+    public List<User> getAllUsers() {
+        return entityManager.createQuery("select u from User u", User.class).getResultList();
+    }
+
+    @Override
+    public List<User> getUsersByIds(List<Long> taggedUserIds) {
+        return entityManager.createQuery("select u from User u where u.id = :taggId",User.class)
+                .setParameter("taggId",taggedUserIds)
+                .getResultList();
+    }
+
 }

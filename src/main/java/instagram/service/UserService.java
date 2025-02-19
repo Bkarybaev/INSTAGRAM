@@ -3,6 +3,7 @@ package instagram.service;
 import instagram.models.Follower;
 import instagram.models.User;
 import instagram.models.UserInfo;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -25,4 +26,8 @@ public interface UserService {
     List<User> search(String query);
 
     void saveUserFollower(User currentUser, User profileUser);
+
+    List<User> getAllUsers();
+
+    List<User> getUsersByIds(List<Long> taggedUserIds);
 }

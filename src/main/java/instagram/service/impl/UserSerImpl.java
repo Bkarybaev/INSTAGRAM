@@ -1,6 +1,7 @@
 package instagram.service.impl;
 
 import instagram.exeptions.NullabelExeption;
+import instagram.exeptions.TaggersUserIdsNull;
 import instagram.models.Follower;
 import instagram.models.User;
 import instagram.models.UserInfo;
@@ -107,6 +108,19 @@ public class UserSerImpl implements UserService {
     @Override
     public void saveUserFollower(User currentUser, User profileUser) {
         userRepo.saveUserFollower(currentUser,profileUser);
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        return userRepo.getAllUsers();
+    }
+
+    @Override
+    public List<User> getUsersByIds(List<Long> taggedUserIds) {
+        if (taggedUserIds == null || taggedUserIds.isEmpty()) {
+            throw new TaggersUserIdsNull("TaggedUserIds cannot be empty");
+        }
+        return userRepo.getUsersByIds(taggedUserIds);
     }
 
 

@@ -26,15 +26,24 @@ public class Post {
     @OneToMany(mappedBy = "post",cascade = {CascadeType.MERGE,CascadeType.REMOVE},fetch = FetchType.EAGER)
     private List<Comment> comments;
     @ToString.Exclude
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
     @ToString.Exclude
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.EAGER,orphanRemoval = true)
     private List<Image> images = new ArrayList<>();
     @ToString.Exclude
     @OneToMany(cascade = CascadeType.REMOVE,fetch = FetchType.EAGER)
     private List<Like> likes;
+
+    @ToString.Exclude
+    @ManyToMany
+    @JoinTable(
+            name = "post_user_tags",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> taggedUsers = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {

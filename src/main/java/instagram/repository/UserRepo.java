@@ -25,4 +25,8 @@ public interface UserRepo {
     List<User> search(String query);
 
     void saveUserFollower(User currentUser, User profileUser);
+
+    List<User> getAllUsers();
+
+    List<User> getUsersByIds(List<Long> taggedUserIds);
 }

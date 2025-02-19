@@ -146,15 +146,36 @@ public class PostController {
         if (userId == null) {
             return "/main/index";
         }
+        List<User> users = userService.getAllUsers();
         model.addAttribute("imageUrl", new Image());
         model.addAttribute("userId", userId);
         model.addAttribute("post", new Post());
+        model.addAttribute("allUsers", users);
         return "post/addPost";
     }
 
     @PostMapping("/savePost/{id}")
-    public String savePost(@PathVariable("id") Long userId, @ModelAttribute("imageUrl") Image imageUrl, @ModelAttribute Post post) {
+    public String savePost(@PathVariable("id") Long userId,
+                           @RequestParam(value = "taggedUsers",required = false) List<String> taggedUserIds,
+                           @ModelAttribute("imageUrl") Image imageUrl,
+                           @ModelAttribute Post post) {
+        System.out.println("Tagged Users (String): \n\n\n" + taggedUserIds);
+
+        if (taggedUserIds != null) {
+            List<Long> userIds = taggedUserIds.stream()
+                    .map(Long::valueOf)
+                    .collect(Collectors.toList());
+            System.out.println("Tagged Users (Long): " + userIds);
+
+            List<User> taggedUsers = userService.getUsersByIds(userIds);
+            post.setTaggedUsers(taggedUsers);
+        }
+
+//        List<User> taggedUsers = (taggedUserIds != null) ? userService.getUsersByIds(taggedUserIds) : new ArrayList<>();
+//        post.setTaggedUsers(taggedUsers);
         User currentUser = userService.getUserById(userId);
+        post.setUser(currentUser);
+        post.getImages().add(imageUrl);
         postService.savePost(post, currentUser.getId(), imageUrl);
         return "redirect:/users/profile/" + currentUser.getId();
     }
