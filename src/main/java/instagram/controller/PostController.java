@@ -9,11 +9,14 @@ import instagram.service.LikeService;
 import instagram.service.PostService;
 import instagram.service.UserService;
 import jakarta.persistence.PersistenceContext;
+import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,6 +42,14 @@ public class PostController {
         Comment comment = commentService.getCommentById(commentId);
         deletedComment(commentId);
         return "redirect:/post/" + comment.getPost().getId();
+    }
+
+    @PostMapping("/commentDeleted/{commentId}/delete")
+    public String commentDeletedAllPost(@PathVariable Long commentId) {
+        Comment comment = commentService.getCommentById(commentId);
+        Long postId = comment.getPost().getId();
+        deletedComment(commentId);
+        return "redirect:/post/" + postId + "/allPosts";
     }
 
     @PostMapping("/commentSearch/{commentId}/delete")
@@ -69,6 +80,17 @@ public class PostController {
         likeService.likeComment(commentId, user);
         return "redirect:/post/" + post.getId();
     }
+    @PostMapping("/commentAllPosts/{commentId}/like")
+    public String commentLikeAllPosts(@PathVariable Long commentId) {
+        Post post = postService.getPostByCommentId(commentId);
+        Long postId = post.getId();
+        User user = userService.getUserById(UserRepoImpl.user.getId());
+        if (user == null) {
+            user = userService.getUserById(UserRepoImpl.user1.getId());
+        }
+        likeService.likeComment(commentId, user);
+        return "redirect:/post/" + postId + "/allPosts";
+    }
 
     @PostMapping("/commentSearch/{commentId}/like")
     public String commentLikeSearch(@PathVariable Long commentId) {
@@ -87,6 +109,13 @@ public class PostController {
 
         Post postById = postService.getPostById(postId);
         return "redirect:/post/" + postById.getId();
+    }
+    @PostMapping("/{postId}/commentAddAllPost")
+    public String commentAddAllPost(@PathVariable Long postId, @RequestParam("commentText") String text) {
+        commentariySerarch(postId, text);
+
+        Post postById = postService.getPostById(postId);
+        return "redirect:/post/" + postById.getId() + "/allPosts";
     }
 
     @PostMapping("/{postId}/commentSearch")
@@ -142,41 +171,66 @@ public class PostController {
     }
 
     @GetMapping("/add/{userId}")
-    public String addPost(@PathVariable Long userId, Model model) {
+    public String addPost(HttpSession session, @PathVariable Long userId, Model model) {
         if (userId == null) {
             return "/main/index";
         }
-        List<User> users = userService.getAllUsers();
+        session.setAttribute("current", userId);
         model.addAttribute("imageUrl", new Image());
         model.addAttribute("userId", userId);
         model.addAttribute("post", new Post());
-        model.addAttribute("allUsers", users);
+        model.addAttribute("search", "");
+        List<Long> ids = (List<Long>) session.getAttribute("usersId");
+        List<User> userList = new ArrayList<>();
+        if (ids != null) {
+            userList.addAll(userService.getUsersByIds(ids));
+
+        }
+
+        List<User> usersList = (List<User>) session.getAttribute("findUsers");
+        model.addAttribute("findUsers", usersList);
+        model.addAttribute("userList", userList);
         return "post/addPost";
     }
 
-    @PostMapping("/savePost/{id}")
-    public String savePost(@PathVariable("id") Long userId,
-                           @RequestParam(value = "taggedUsers",required = false) List<String> taggedUserIds,
-                           @ModelAttribute("imageUrl") Image imageUrl,
-                           @ModelAttribute Post post) {
-        System.out.println("Tagged Users (String): \n\n\n" + taggedUserIds);
+    @PostMapping("/searchUserToAddPost")
+    public String searchUserToAddPost(HttpSession session, @ModelAttribute("search") String search) {
+        Long id = (Long) session.getAttribute("current");
+        List<User> search1 = new ArrayList<>();
+        if (search != null) {
 
-        if (taggedUserIds != null) {
-            List<Long> userIds = taggedUserIds.stream()
-                    .map(Long::valueOf)
-                    .collect(Collectors.toList());
-            System.out.println("Tagged Users (Long): " + userIds);
-
-            List<User> taggedUsers = userService.getUsersByIds(userIds);
-            post.setTaggedUsers(taggedUsers);
+            search1 = userService.search(search);
         }
 
-//        List<User> taggedUsers = (taggedUserIds != null) ? userService.getUsersByIds(taggedUserIds) : new ArrayList<>();
-//        post.setTaggedUsers(taggedUsers);
+        session.setAttribute("findUsers", search1);
+        return "redirect:/post/add/" + id;
+    }
+
+    @PostMapping("/addUser/{userId}")
+    public String addUser(HttpSession session, @PathVariable("userId") Long userId) {
+        Long id = (Long) session.getAttribute("current");
+        List<Long> userIds = (List<Long>) session.getAttribute("usersId");
+        if (userIds == null) {
+            userIds = new ArrayList<>();
+        }
+        userIds.add(userId);
+        session.setAttribute("usersId", userIds);
+        return "redirect:/post/add/" + id;
+    }
+
+    @PostMapping("/savePost/{id}")
+    public String savePost(HttpSession session, @PathVariable("id") Long userId,
+                           @ModelAttribute("imageUrl") Image imageUrl,
+                           @ModelAttribute Post post) {
+
+        List<Long> userIds = (List<Long>) session.getAttribute("usersId");
+        List<User> taggedUsers = userService.getUsersByIds(userIds);
+
+
         User currentUser = userService.getUserById(userId);
         post.setUser(currentUser);
         post.getImages().add(imageUrl);
-        postService.savePost(post, currentUser.getId(), imageUrl);
+        postService.savePost(post, currentUser.getId(), imageUrl,taggedUsers);
         return "redirect:/users/profile/" + currentUser.getId();
     }
 
@@ -184,6 +238,11 @@ public class PostController {
     public String likePost(@PathVariable Long postId) {
         postService.likePost(postId);
         return "redirect:/post/" + postId;
+    }
+    @PostMapping("/allPost/{postId}/like")
+    public String likePostAll(@PathVariable Long postId) {
+        postService.likePost(postId);
+        return "redirect:/post/" + postId + "/allPosts";
     }
 
     @PostMapping("/{postId}/likeSearch")
@@ -200,6 +259,42 @@ public class PostController {
 
         return "post/allPosts";
     }
+    @PostMapping("/removeTag/{postId}/{userId}")
+    @Transactional
+    public String removeTaggedUser(@PathVariable Long postId, @PathVariable Long userId) {
+        Post post = postService.getPostById(postId);
+        User user = userService.getUserById(userId);
+
+        if (post != null && user != null) {
+            post.getTaggedUsers().remove(user);
+            postService.save(post);
+        }
+
+        return "redirect:/post/" + postId;
+    }
+
+    @PostMapping("/delete/{postId}")
+    public String deletePost(@PathVariable Long postId) {
+            Post post = postService.getPostById(postId);
+        Long nextPostId = postService.delete(postId);
+        if (nextPostId == null || nextPostId == 0 || nextPostId.describeConstable().isEmpty()) {
+            return "redirect:/users/profile/" + post.getUser().getId();
+        }
+        return "redirect:/post/" + nextPostId;
+    }
+
+    @PostMapping("/update/{id}")
+    @Transactional
+    public String updatePost(@PathVariable Long id,@ModelAttribute Post newpost) {
+        Post post = postService.getPostById(id);
+        post.setTitle(newpost.getTitle());
+        post.setDescription(newpost.getDescription());
+        return "redirect:/post/" + post.getId();
+
+    }
+
+
+
 
 
 }

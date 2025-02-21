@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Post Details</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="icon" type="image/png" href="https://xiaomiui.net/wp-content/uploads/2022/05/Instagram-new-logo-e1652752802319.jpg">
   <style>
     body {
       background-color: #f8f9fa;
@@ -42,6 +43,15 @@
       <h2 th:text="${post.title}"></h2>
       <p th:text="${post.description}"></p>
       <p><small th:text="${post.createdAt}"></small></p>
+
+      <!-- Tagged Users -->
+      <h5 th:if="${post?.taggedUsers != null and not #lists.isEmpty(post.taggedUsers)}">Tagged Users:</h5>
+      <ul class="list-group" th:if="${post?.taggedUsers}">
+        <li class="list-group-item d-flex justify-content-between align-items-center"
+            th:each="user : ${post.taggedUsers}">
+          <span th:text="${user?.username}"></span>
+        </li>
+      </ul>
 
       <!-- Лайк баскычы -->
       <form th:action="@{/post/{postId}/likeSearch(postId=${post.id})}" method="post">

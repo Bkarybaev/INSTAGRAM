@@ -17,11 +17,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @Column(unique = true)
+    @Column(unique = true)
     private String username;
     private String password;
 
-//    @Column(unique = true)
+    @Column(unique = true)
     private String email;
     private String phoneNumber;
 
@@ -39,7 +39,7 @@ public class User {
     private List<Post> posts;
 
     @ToString.Exclude
-    @ManyToMany(mappedBy = "taggedUsers")
+    @ManyToMany(mappedBy = "taggedUsers",fetch = FetchType.EAGER)
     private List<Post> taggedPosts = new ArrayList<>();
 
     @ToString.Exclude

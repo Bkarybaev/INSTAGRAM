@@ -26,7 +26,7 @@ public class Post {
     @OneToMany(mappedBy = "post",cascade = {CascadeType.MERGE,CascadeType.REMOVE},fetch = FetchType.EAGER)
     private List<Comment> comments;
     @ToString.Exclude
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
     @ToString.Exclude
@@ -37,7 +37,7 @@ public class Post {
     private List<Like> likes;
 
     @ToString.Exclude
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST},fetch = FetchType.EAGER)
     @JoinTable(
             name = "post_user_tags",
             joinColumns = @JoinColumn(name = "post_id"),
@@ -45,7 +45,7 @@ public class Post {
     )
     private List<User> taggedUsers = new ArrayList<>();
 
-    @PrePersist
+    @PrePersist @PreUpdate
     protected void onCreate() {
         createdAt = LocalDate.now();
     }

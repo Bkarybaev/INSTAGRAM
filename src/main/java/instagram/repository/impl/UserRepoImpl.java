@@ -108,8 +108,8 @@ public class UserRepoImpl implements UserRepo {
 
     @Override
     public List<User> search(String query) {
-        return entityManager.createQuery("select u from User u where u.username ilike :query", User.class)
-                .setParameter("query", query)
+        return entityManager.createQuery("select u from User u where u.username ilike :query or u.userInfo.fullName ilike :query", User.class)
+                .setParameter("query", "%"+query+"%")
                 .getResultList();
     }
 
@@ -143,9 +143,9 @@ public class UserRepoImpl implements UserRepo {
 
     @Override
     public List<User> getUsersByIds(List<Long> taggedUserIds) {
-        return entityManager.createQuery("select u from User u where u.id = :taggId",User.class)
-                .setParameter("taggId",taggedUserIds)
-                .getResultList();
+        List<User> users = new ArrayList<>();
+        taggedUserIds.forEach(userId -> users.add(entityManager.find(User.class, userId)));
+         return users;
     }
 
 }
