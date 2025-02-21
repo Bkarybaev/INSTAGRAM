@@ -45,12 +45,14 @@ public class AuthorController {
 
     @PostMapping("/saveRegister")
     public String saveRegister(@ModelAttribute("newUser") User user,HttpSession session) {
-        User user1 = UserRepoImpl.user1;
-        session.setAttribute("user", user1);
-        String message = userService.saveUser(user);
-        if (message.equalsIgnoreCase("success")) {
-            User byEmail = userRepo.getByEmail(user.getEmail());
-            return "redirect:/users/profile/" + byEmail.getId();
+        if (user.getPassword().matches("^(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")){
+            User user1 = UserRepoImpl.user1;
+            session.setAttribute("user", user1);
+            String message = userService.saveUser(user);
+            if (message.equalsIgnoreCase("success")) {
+                User byEmail = userRepo.getByEmail(user.getEmail());
+                return "redirect:/users/profile/" + byEmail.getId();
+            }
         }
         return "/main/index";
     }
