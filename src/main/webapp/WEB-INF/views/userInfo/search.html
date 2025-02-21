@@ -49,7 +49,7 @@
             border-bottom: 1px solid #ddd;
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: space-between;
         }
         .user-item img {
             width: 40px;
@@ -62,6 +62,7 @@
             color: #333;
             font-weight: bold;
         }
+
     </style>
 </head>
 <body>
@@ -77,16 +78,23 @@
 
     <!-- Натыйжалар тизмеси -->
     <div class="user-list" th:if="${users}">
-        <h4>Results:</h4>
+            <h4>Results:</h4>
         <div th:each="user : ${users}" class="user-item">
-            <img th:src="${user.userInfo?.imageUrl}" alt="Profile Picture">
-            <a th:href="@{/users/searchUserProfile/{id}(id=${user.id})}" th:text="${user.username}"></a>
+            <div>
+                <img th:src="${user.userInfo?.imageUrl}" alt="Profile Picture">
+                <a th:href="@{/users/searchUserProfile/{id}(id=${user.id})}" th:text="${user.username}"></a>
+                <a th:href="@{/users/searchUserProfile/{id}(id=${user.id})}" th:text="${user.userInfo.fullName}"></a>
+            </div>
+
+            <div>
+                <form th:action="@{/users/{userId}/subscribeSearch(userId=${user.id})}" method="post">
+                    <button type="submit" class="btn btn-primary">
+                        <span th:if="${isSubscribedMap[user.id] != null and isSubscribedMap[user.id]}">Subscription</span>
+                        <span th:unless="${isSubscribedMap[user.id] != null and isSubscribedMap[user.id]}">Subscribe</span>
+                    </button>
+                </form>
+            </div>
         </div>
-        <form th:action="@{/users/{userId}/subscribe(userId=${userInfoSub?.id})}" method="post">
-            <button type="submit" class="btn btn-primary"
-                    th:text="${isSubscribed ? 'subscription' : 'Subscribe'}">
-            </button>
-        </form>
     </div>
 </div>
 

@@ -226,7 +226,6 @@ public class PostController {
         List<Long> userIds = (List<Long>) session.getAttribute("usersId");
         List<User> taggedUsers = userService.getUsersByIds(userIds);
 
-
         User currentUser = userService.getUserById(userId);
         post.setUser(currentUser);
         post.getImages().add(imageUrl);

@@ -24,13 +24,14 @@ public class UserController {
     private final PostService postService;
     private final UserInfoService userInfoService;
 
-        public User currentUser(){
-            User user = userService.getUserById(UserRepoImpl.user.getId());
-            if (user == null) {
-                user = userService.getUserById(UserRepoImpl.user1.getId());
-            }
-            return user;
+    public User currentUser() {
+        User user = userService.getUserById(UserRepoImpl.user.getId());
+        if (user == null) {
+            user = userService.getUserById(UserRepoImpl.user1.getId());
         }
+        return user;
+    }
+
     @GetMapping("/profile/{id}")
     public String showUserProfile(@PathVariable("id") Long id, Model model) {
         Map<User, Map<UserInfo, Follower>> profileData = userService.userProfile(id);
@@ -40,22 +41,32 @@ public class UserController {
 
         User user = profileData.keySet().iterator().next();
         UserInfo userInfo = profileData.get(user).keySet().iterator().next();
+
         List<Post> post = postService.getPostsByUserId(user.getId());
         Collections.reverse(post);
-        Map<Integer,Integer> followerCounts = userService.findFollowersCounts(user);
+
+        Map<Integer, Integer> followerCounts = userService.findFollowersCounts(user);
         int followerCount1 = followerCounts.keySet().iterator().next();
         int followerCount2 = followerCounts.values().iterator().next();
 
         User currentUser = userService.findByUsername(user.getUsername());
 
+        List<User> followersList = userService.getUsersByIds(user.getFollower().getSubscribes());
+
+        List<User> followingList = userService.getUsersByIds(user.getFollower().getSubscriptions());
+
         model.addAttribute("user", user);
         model.addAttribute("userInfo", userInfo);
-        model.addAttribute("followerSs", followerCount1);
-        model.addAttribute("followerNs",followerCount2);
+        model.addAttribute("followerSs", followerCount1); // Followers саны
+        model.addAttribute("followerNs", followerCount2); // Following саны
         model.addAttribute("posts", post);
         model.addAttribute("currentUser", currentUser);
+        model.addAttribute("followersList", followersList); // Followers тизмеси
+        model.addAttribute("followingList", followingList); // Following тизмеси
+
         return "userInfo/userProfile";
     }
+
 
     @GetMapping("/update-profile/{id}")
     public String updateUserProfile(@PathVariable("id") Long id, Model model) {
@@ -77,26 +88,42 @@ public class UserController {
         User userById = userService.getUserById(id);
 
         try {
-        String message = userInfoService.updateUserInfo(userInfo);
-            userService.updateUserProfile(id, user,userInfo);
+            String message = userInfoService.updateUserInfo(userInfo);
+            userService.updateUserProfile(id, user, userInfo);
             model.addAttribute("successMessage", "Profile updated " + message);
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Error updating profile!");
         }
         return "redirect:/users/profile/" + userById.getId();
     }
+
     @GetMapping("/searchByQuery")
-    public String searchByQuery( Model model) {
-        model.addAttribute("query" , "");
+    public String searchByQuery(Model model) {
+        model.addAttribute("query", "");
         return "userInfo/search";
     }
-
+private String queryP = null;
     @GetMapping("/search")
     public String search(@ModelAttribute("query") String query, Model model) {
         List<User> users = userService.search(query);
+        queryP = query;
+        List<Long> subscribes = new ArrayList<>();
+        for (int i = 0; i < users.size(); i++) {
+            subscribes = users.get(i).getFollower().getSubscribes();
+        }
+        boolean isSubscribed = false;
+        for (Long id : subscribes) {
+            if (currentUser().getId().equals(id)) {
+                isSubscribed = true;
+                break;
+            }
+        }
+
+        model.addAttribute("isSubscribed", isSubscribed);
         model.addAttribute("users", users);
         return "userInfo/search";
     }
+
     @GetMapping("/searchUserProfile/{userProfileId}")
     @Transactional
     public String searchUserProfile(@PathVariable("userProfileId") Long userId, Model model) {
@@ -117,7 +144,6 @@ public class UserController {
             currentUser = userService.getUserById(UserRepoImpl.user1.getId());
         }
         User profileUser = userService.getUserById(userId);
-
         Map<User, Map<UserInfo, Follower>> userMapMap1 = userService.userProfile(currentUser.getId());
         UserInfo userInfoProf = userMapMap1.keySet().iterator().next().getUserInfo();
 
@@ -151,14 +177,33 @@ public class UserController {
         }
         return "redirect:/users/profile/" + id;
     }
-    
+
     @PostMapping("/{userId}/subscribe")
     public String subscribe(@PathVariable Long userId) {
         User currentUser = currentUser();
         User profileUser = userService.getUserById(userId);
-        userService.saveUserFollower(currentUser,profileUser);
+        userService.saveUserFollower(currentUser, profileUser);
         return "redirect:/users/searchUserProfile/" + userId;
     }
+
+    @PostMapping("/{userId}/subscribeSearch")
+    public String subscribeSearch(@PathVariable Long userId, Model model) {
+        User currentUser = currentUser();
+        User profileUser = userService.getUserById(userId);
+        userService.saveUserFollower(currentUser, profileUser);
+        List<User> users = userService.search(queryP);
+        Map<Long, Boolean> isSubscribedMap = new HashMap<>();
+        for (User user : users) {
+            boolean isSubscribed = userService.isUserSubscribed(currentUser, user);
+            isSubscribedMap.put(user.getId(), isSubscribed);
+        }
+        model.addAttribute("users", users);
+        model.addAttribute("isSubscribedMap", isSubscribedMap);
+
+        return "userInfo/search";
+    }
+
+
 
 
 

@@ -30,6 +30,7 @@
     <a th:href="@{/post/all}" class="btn btn-secondary mb-3">Back to Profile</a>
 
     <div class="card">
+        <a th:href="@{/users/searchUserProfile/{id}(id=${userId})}" class="btn btn-secondary mb-3">User Profile</a>
         <div th:if="${post?.images != null and post?.images?.size() > 0}">
             <img th:src="@{${post?.images[0]?.imageUrl}}" class="post-image" alt="Post Image">
         </div>

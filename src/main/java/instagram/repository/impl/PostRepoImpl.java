@@ -52,6 +52,7 @@ public class PostRepoImpl implements PostRepo {
                 .setParameter("title", post.getTitle())
                 .setParameter("description", post.getDescription())
                 .getSingleResult();
+
         if (taggedUsers != null) {
             singleResult.setTaggedUsers(taggedUsers);
             for (User taggedUser : taggedUsers) {
@@ -62,6 +63,7 @@ public class PostRepoImpl implements PostRepo {
                 em.merge(taggedUser);
             }
         }
+
         em.merge(singleResult);
 
         em.createNativeQuery("""

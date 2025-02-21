@@ -117,10 +117,16 @@ public class UserSerImpl implements UserService {
 
     @Override
     public List<User> getUsersByIds(List<Long> taggedUserIds) {
-        if (taggedUserIds == null || taggedUserIds.isEmpty()) {
-            throw new TaggersUserIdsNull("TaggedUserIds cannot be empty");
-        }
         return userRepo.getUsersByIds(taggedUserIds);
+    }
+
+    @Override
+    public boolean isUserSubscribed(User currentUser, User profileUser) {
+            if (profileUser.getFollower() == null) {
+                return false;
+            }
+            return profileUser.getFollower().getSubscribes().contains(currentUser.getId());
+
     }
 
 

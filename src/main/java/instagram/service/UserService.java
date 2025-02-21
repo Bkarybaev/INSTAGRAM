@@ -30,4 +30,6 @@ public interface UserService {
     List<User> getAllUsers();
 
     List<User> getUsersByIds(List<Long> taggedUserIds);
+
+    boolean isUserSubscribed(User currentUser, User user);
 }
