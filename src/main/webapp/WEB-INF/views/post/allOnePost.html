@@ -28,9 +28,11 @@
 
 <div class="container">
     <a th:href="@{/post/all}" class="btn btn-secondary mb-3">Back to Profile</a>
-
+    <div th:if="${currentUser?.id != userId}">
+        <p th:onclick="'window.location.href=\'/users/searchUserProfile/'+${userId}+'\''"><strong>Author:</strong> <span th:text="${post?.user?.username}"></span></p>
+    </div>
     <div class="card">
-        <a th:href="@{/users/searchUserProfile/{id}(id=${userId})}" class="btn btn-secondary mb-3">User Profile</a>
+
         <div th:if="${post?.images != null and post?.images?.size() > 0}">
             <img th:src="@{${post?.images[0]?.imageUrl}}" class="post-image" alt="Post Image">
         </div>
@@ -38,26 +40,27 @@
             <h2 th:text="${post?.title}"></h2>
             <p th:text="${post?.description}"></p>
             <p><small th:text="${post?.createdAt}"></small></p>
-
-            <h5 th:if="${post?.taggedUsers != null and not #lists.isEmpty(post.taggedUsers)}">Tagged Users:</h5>
-            <ul class="list-group" th:if="${post?.taggedUsers}">
-                <li class="list-group-item d-flex justify-content-between align-items-center"
-                    th:each="user : ${post.taggedUsers}">
-                    <span th:text="${user?.username}"></span>
-                    <form th:if="${session.user != null and session.user.id == post.user.id}"
-                          th:action="'/post/removeTag/'+${post.id}+'/'+${user.id}"
-                          method="post">
-                        <button type="submit" class="btn btn-danger btn-sm">Remove</button>
-                    </form>
-                </li>
-            </ul>
-
             <!-- Лайк баскычы -->
             <form th:action="@{/post/allPost/{postId}/like(postId=${post?.id})}" method="post">
                 <button type="submit">
                     &#10084;&#65039;  <span th:text="${post?.likes?.size()}"></span> Likes
                 </button>
             </form>
+
+            <h5 th:if="${post?.taggedUsers != null and not #lists?.isEmpty(post?.taggedUsers)}">Tagged Users:</h5>
+            <ul class="list-group" th:if="${post?.taggedUsers}">
+                <li class="list-group-item d-flex justify-content-between align-items-center"
+                    th:each="user : ${post?.taggedUsers}">
+                    <span th:text="${user?.username}"></span>
+                    <form th:if="${session?.user != null and session?.user?.id == post?.user?.id}"
+                          th:action="'/post/removeTag/'+${post?.id}+'/'+${user?.id}"
+                          method="post">
+                        <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                    </form>
+                </li>
+            </ul>
+
+
         </div>
     </div>
 

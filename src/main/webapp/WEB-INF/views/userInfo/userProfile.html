@@ -144,7 +144,7 @@
 <div class="container">
     <!-- Издөө тилкеси -->
     <div class="search-bar">
-        <form th:action="@{/users/search}" method="get">
+        <form th:action="@{/users/subscribeSearch}" method="post">
             <input type="text" name="query" id="query" placeholder="Search users..." required>
             <button type="submit" class="btn btn-primary">Search</button>
         </form>
@@ -189,7 +189,7 @@
                             <div class="modal-body">
                                 <ul>
                                     <li th:each="follower : ${followersList}">
-                                        <a th:href="@{/users/{id}(id=${follower?.id})}" th:text="${follower?.username}"></a>
+                                        <a th:href="@{/users/searchUserProfile/{id}(id=${follower?.id})}" th:text="${follower?.username}"></a>
                                     </li>
                                 </ul>
                             </div>
@@ -208,7 +208,7 @@
                             <div class="modal-body">
                                 <ul>
                                     <li th:each="following : ${followingList}">
-                                        <a th:href="@{/users/{id}(id=${following?.id})}" th:text="${following?.username}"></a>
+                                        <a th:href="@{/users/searchUserProfile/{id}(id=${following?.id})}" th:text="${following?.username}"></a>
                                     </li>
                                 </ul>
                             </div>
@@ -247,12 +247,12 @@
 
 </div>
 <script>
-    let a = document.getElementById("query");
-    a.addEventListener("click", function () {
-        let b = document.createElement("a");
-        b.setAttribute("href", "/users/search?query=null")
-        b.click()
-    })
+    // let a = document.getElementById("query");
+    // a.addEventListener("click", function () {
+    //     let b = document.createElement("a");
+    //     b.setAttribute("href", "/users/search?query=null")
+    //     b.click()
+    // })
 
 
 </script>

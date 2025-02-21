@@ -153,6 +153,7 @@ public class PostController {
         List<Comment> comments = commentService.getCommentsByPostId(post.getId());
         Collections.reverse(comments);
         model.addAttribute("post", post);
+        model.addAttribute("currentUser", currentUser());
         model.addAttribute("userId", post.getUser().getId());
         model.addAttribute("comments", comments);
     }
@@ -224,7 +225,11 @@ public class PostController {
                            @ModelAttribute Post post) {
 
         List<Long> userIds = (List<Long>) session.getAttribute("usersId");
-        List<User> taggedUsers = userService.getUsersByIds(userIds);
+        List<User> taggedUsers = null;
+        if (userIds != null) {
+             taggedUsers = userService.getUsersByIds(userIds);
+        }
+
 
         User currentUser = userService.getUserById(userId);
         post.setUser(currentUser);
@@ -254,6 +259,11 @@ public class PostController {
     public String getAllPosts(Model model) {
         List<Post> posts = postService.getAll();
         Collections.reverse(posts);
+        Map<User, Map<UserInfo, Follower>> userMapMap1 = userService.userProfile(currentUser().getId());
+        UserInfo userInfoProf = userMapMap1.keySet().iterator().next().getUserInfo();
+
+
+        model.addAttribute("userInfoProf", userInfoProf);
         model.addAttribute("posts", posts);
 
         return "post/allPosts";

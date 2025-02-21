@@ -62,9 +62,9 @@ public class PostRepoImpl implements PostRepo {
                 taggedUser.getTaggedPosts().add(post);
                 em.merge(taggedUser);
             }
+        em.merge(singleResult);
         }
 
-        em.merge(singleResult);
 
         em.createNativeQuery("""
                             INSERT INTO images (imageurl, post_id, user_id)
@@ -154,8 +154,12 @@ public class PostRepoImpl implements PostRepo {
     public Long delete(Long postId1) {
         Post post = em.find(Post.class, postId1);
        Long  postId = post.getId();
+
         em.createQuery("update Like set comment.id = null where comment.post.id = :postId")
                 .setParameter("postId", postId)
+                .executeUpdate();
+        em.createNativeQuery("DELETE FROM posts_likes WHERE post_id = ?")
+                .setParameter(1, postId)
                 .executeUpdate();
         em.createQuery("delete from Like l where l.post.id = :postId")
                 .setParameter("postId", postId)

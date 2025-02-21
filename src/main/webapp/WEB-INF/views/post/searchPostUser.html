@@ -36,29 +36,29 @@
   <a th:href="@{/users/searchUserProfile/{id}(id=${userId})}" class="btn btn-secondary mb-3">Back to Profile</a>
 
   <div class="card">
-    <div th:if="${post.images != null and post.images.size() > 0}">
-      <img th:src="@{${post.images[0]?.imageUrl}}" class="post-image" alt="Post Image">
+    <div th:if="${post?.images != null and post?.images?.size() > 0}">
+      <img th:src="@{${post?.images[0]?.imageUrl}}" class="post-image" alt="Post Image">
     </div>
     <div class="card-body">
-      <h2 th:text="${post.title}"></h2>
-      <p th:text="${post.description}"></p>
-      <p><small th:text="${post.createdAt}"></small></p>
-
+      <h2 th:text="${post?.title}"></h2>
+      <p th:text="${post?.description}"></p>
+      <p><small th:text="${post?.createdAt}"></small></p>
+      <!-- Лайк баскычы -->
+      <form th:action="@{/post/{postId}/likeSearch(postId=${post?.id})}" method="post">
+        <button type="submit">
+          &#10084;&#65039;  <span th:text="${post?.likes?.size()}"></span> Likes
+        </button>
+      </form>
       <!-- Tagged Users -->
-      <h5 th:if="${post?.taggedUsers != null and not #lists.isEmpty(post.taggedUsers)}">Tagged Users:</h5>
+      <h5 th:if="${post?.taggedUsers != null and not #lists?.isEmpty(post?.taggedUsers)}">Tagged Users:</h5>
       <ul class="list-group" th:if="${post?.taggedUsers}">
         <li class="list-group-item d-flex justify-content-between align-items-center"
-            th:each="user : ${post.taggedUsers}">
+            th:each="user : ${post?.taggedUsers}">
           <span th:text="${user?.username}"></span>
         </li>
       </ul>
 
-      <!-- Лайк баскычы -->
-      <form th:action="@{/post/{postId}/likeSearch(postId=${post.id})}" method="post">
-        <button type="submit">
-          &#10084;&#65039;  <span th:text="${post.likes.size()}"></span> Likes
-        </button>
-      </form>
+
     </div>
   </div>
 

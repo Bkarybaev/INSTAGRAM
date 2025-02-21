@@ -145,31 +145,29 @@
 
 <div class="container">
     <h2 class="text-center">All Posts</h2>
+    <div style="position: absolute; top: 20px; right: 300px;">
+        <a th:href="@{/users/myProfile}">
+            <img th:src="${userInfoProf?.imageUrl}" alt="Profile"
+                 style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #e1306c; object-fit: cover;">
+        </a>
+    </div>
 
     <div class="post-container">
         <div class="post" th:each="post : ${posts}">
-            <a th:href="@{/post/{id}/allPosts(id=${post.id})}">
-                <img th:src="@{${post.images[0]?.imageUrl}}" alt="Post Image">
+            <a th:href="@{/post/{id}/allPosts(id=${post?.id})}">
+                <img th:src="@{${post?.images[0]?.imageUrl}}" alt="Post Image">
             </a>
-            <h3 th:text="${post.title}"></h3>
-            <p th:text="${post.description}"></p>
-            <p><small th:text="${post.createdAt}"></small></p>
+            <h3 th:text="${post?.title}"></h3>
+            <p th:text="${post?.description}"></p>
+            <p><small th:text="${post?.createdAt}"></small></p>
 
             <!-- Like кнопкасы -->
-            <button class="like-btn" th:attr="data-post-id=${post.id}">
-                &#10084;&#65039;<span th:text="${post.likes.size()}"></span> Likes
+            <button class="like-btn" th:attr="data-post-id=${post?.id}">
+                &#10084;&#65039;<span th:text="${post?.likes?.size()}"></span> Likes
             </button>
         </div>
-        <!-- Посттун автору -->
-        <p><strong>Author:</strong> <span th:text="${post.author.username}"></span></p>
 
-        <!-- Белгиленген (tagged) колдонуучулар -->
-        <p class="tagged-users">
-            <strong>Tagged:</strong>
-            <span th:each="user, iterStat : ${post.taggedUsers}">
-                <span th:text="${user.username}"></span><span th:if="${!iterStat.last}">, </span>
-            </span>
-        </p>
+
     </div>
 
 </div>

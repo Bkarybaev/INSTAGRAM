@@ -64,6 +64,83 @@
       background: none;
       cursor: pointer;
     }
+    #updateForm {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      max-width: 500px;
+      width: 90%;
+      z-index: 1000;
+    }
+
+    #updateForm::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+
+    #updateForm form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+      z-index: 1001;
+    }
+
+    #updateForm input[type="text"],
+    #updateForm textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+      background-color: #fff;
+      position: relative;
+      z-index: 1001;
+    }
+
+    #updateForm textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    #updateForm button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      position: relative;
+      z-index: 1001;
+    }
+
+    #updateForm button:hover {
+      background-color: #0056b3;
+    }
+
+    #updateForm .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      z-index: 1001;
+    }
 
   </style>
 </head>
@@ -93,10 +170,6 @@
         <button type="submit" class="btn btn-primary">Update</button>
       </form>
     </div>
-<!--    <form class="delete" th:action="@{/post/delete/{id}(id=${post.id})}" method="post"-->
-<!--          onsubmit="return confirm('Are you sure you want to delete this post?');">-->
-<!--      <button type="submit" class="btn btn-danger">Delete Post</button>-->
-<!--    </form>-->
   </div>
 
 
@@ -110,25 +183,25 @@
       <h2 th:text="${post?.title}"></h2>
       <p th:text="${post?.description}"></p>
       <p><small th:text="${post?.createdAt}"></small></p>
-
-      <!-- Tagged Users -->
-      <h5 th:if="${post?.taggedUsers != null and not #lists.isEmpty(post.taggedUsers)}">Tagged Users:</h5>
-      <ul class="list-group" th:if="${post?.taggedUsers}">
-        <li class="list-group-item d-flex justify-content-between align-items-center"
-            th:each="user : ${post.taggedUsers}">
-          <span th:text="${user?.username}"></span>
-          <form th:action="'/post/removeTag/'+${post.id}+'/'+${user.id}" method="post">
-            <button type="submit" class="btn btn-danger btn-sm">Remove</button>
-          </form>
-        </li>
-      </ul>
-
       <!-- Лайк баскычы -->
       <form th:action="@{/post/{postId}/like(postId=${post?.id})}" method="post">
         <button type="submit">
           &#10084;&#65039;  <span th:text="${post?.likes?.size()}"></span> Likes
         </button>
       </form>
+      <!-- Tagged Users -->
+      <h5 th:if="${post?.taggedUsers != null and not #lists?.isEmpty(post?.taggedUsers)}">Tagged Users:</h5>
+      <ul class="list-group" th:if="${post?.taggedUsers}">
+        <li class="list-group-item d-flex justify-content-between align-items-center"
+            th:each="user : ${post?.taggedUsers}">
+          <span th:text="${user?.username}"></span>
+          <form th:action="'/post/removeTag/'+${post?.id}+'/'+${user?.id}" method="post">
+            <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+          </form>
+        </li>
+      </ul>
+
+
     </div>
   </div>
 
