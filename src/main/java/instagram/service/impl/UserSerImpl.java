@@ -6,6 +6,7 @@ import instagram.models.Follower;
 import instagram.models.User;
 import instagram.models.UserInfo;
 import instagram.repository.UserRepo;
+import instagram.repository.impl.UserRepoImpl;
 import instagram.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -102,7 +103,13 @@ public class UserSerImpl implements UserService {
         if (query == null || query.isEmpty()) {
             throw new NullabelExeption("Query cannot be empty");
         }
-        return userRepo.search(query);
+        User user = UserRepoImpl.user;
+        if (user.getUsername() == null || user.getUsername().isEmpty()) {
+          user =  UserRepoImpl.user1;
+        }
+        List<User> users = userRepo.search(query);
+      users.remove(user);
+        return users;
     }
 
     @Override
@@ -122,9 +129,6 @@ public class UserSerImpl implements UserService {
 
     @Override
     public boolean isUserSubscribed(User currentUser, User profileUser) {
-            if (profileUser.getFollower() == null) {
-                return false;
-            }
             return profileUser.getFollower().getSubscribes().contains(currentUser.getId());
 
     }

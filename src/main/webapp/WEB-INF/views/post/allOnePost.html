@@ -28,9 +28,9 @@
 
 <div class="container">
     <a th:href="@{/post/all}" class="btn btn-secondary mb-3">Back to Profile</a>
-    <div th:if="${currentUser?.id != userId}">
+<!--    <div th:if="${currentUser?.id != userId}">-->
         <p th:onclick="'window.location.href=\'/users/searchUserProfile/'+${userId}+'\''"><strong>Author:</strong> <span th:text="${post?.user?.username}"></span></p>
-    </div>
+<!--    </div>-->
     <div class="card">
 
         <div th:if="${post?.images != null and post?.images?.size() > 0}">
@@ -69,11 +69,11 @@
         <h4>Comments</h4>
         <ul class="list-group">
             <li class="list-group-item" th:each="comment : ${comments}">
-                <div th:if="${comment != null}">
+                <div th:if="${comment?.user?.username != null}">
                     <strong th:text="${comment?.user?.username ?: 'N/A'}"></strong>
                     <span th:text="${comment?.commentText ?: 'No Comment'}"></span>
                     <span th:text="${comment?.createdAt ?: 'Unknown Date'}"></span>
-                </div>
+
 
                 <!-- Лайк баскычы -->
                 <form th:action="@{/post/commentAllPosts/{commentId}/like(commentId=${comment?.id})}" method="post">
@@ -81,7 +81,7 @@
                         &#10084;&#65039; <span th:text="${comment?.likes?.size() ?: 0}"></span>
                     </button>
                 </form>
-
+                </div>
                 <!-- Delete Comment (Эгер активдүү колдонуучу комментарийдин ээси болсо гана көрсөтүлөт) -->
                 <form th:if="${userId == comment?.user?.id}"
                       th:action="@{/post/commentDeleted/{commentId}/delete(commentId=${comment?.id})}"

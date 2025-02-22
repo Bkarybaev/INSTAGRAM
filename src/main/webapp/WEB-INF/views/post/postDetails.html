@@ -1,269 +1,381 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Post Details</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-  <link rel="icon" type="image/png" href="https://xiaomiui.net/wp-content/uploads/2022/05/Instagram-new-logo-e1652752802319.jpg">
-  <style>
-    body {
-      background-color: #f8f9fa;
-    }
-    .container {
-      max-width: 800px;
-      margin: auto;
-      padding: 20px;
-    }
-    .post-image {
-      width: 100%;
-      height: 400px;
-      object-fit: cover;
-      border-radius: 10px;
-    }
-    .buttons-deletedANdBack {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-    .action-menu {
-      position: relative;
-      display: inline-block;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Details</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="icon" type="image/png"
+          href="https://xiaomiui.net/wp-content/uploads/2022/05/Instagram-new-logo-e1652752802319.jpg">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
 
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      background-color: white;
-      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-      border-radius: 5px;
-      right: 0;
-      z-index: 1;
-    }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+        }
 
-    .dropdown-content a {
-      display: block;
-      padding: 8px 15px;
-      text-decoration: none;
-      color: black;
-      font-weight: bold;
-      border-radius: 5px;
-    }
+        .post-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
 
-    .dropdown-content a:hover {
-      background-color: #f1f1f1;
-    }
+        .buttons-deletedANdBack {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
 
-    .show {
-      display: block;
-    }
-    .btn-light {
-      font-size: 20px;
-      border: none;
-      background: none;
-      cursor: pointer;
-    }
-    #updateForm {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: #ffffff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      max-width: 500px;
-      width: 90%;
-      z-index: 1000;
-    }
+        .action-menu {
+            position: relative;
+            display: inline-block;
+        }
 
-    #updateForm::before {
-      content: "";
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 999;
-    }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            z-index: 1000;
+            width: max-content;
+            min-width: 150px;
+            padding: 5px 0;
+        }
 
-    #updateForm form {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      position: relative;
-      z-index: 1001;
-    }
+        .dropdown-content a,
+        .dropdown-content form {
+            display: block;
+            padding: 8px 12px;
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+        }
 
-    #updateForm input[type="text"],
-    #updateForm textarea {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 16px;
-      background-color: #fff;
-      position: relative;
-      z-index: 1001;
-    }
+        .dropdown-content a:hover,
+        .dropdown-content form:hover {
+            background-color: #f1f1f1;
+        }
 
-    #updateForm textarea {
-      min-height: 100px;
-      resize: vertical;
-    }
+        .show {
+            display: block;
+        }
 
-    #updateForm button {
-      background-color: #007bff;
-      color: white;
-      border: none;
-      padding: 10px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-      position: relative;
-      z-index: 1001;
-    }
 
-    #updateForm button:hover {
-      background-color: #0056b3;
-    }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            right: 0;
+            z-index: 1;
+        }
 
-    #updateForm .close-btn {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      background: none;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      z-index: 1001;
-    }
+        .dropdown-content a {
+            display: block;
+            padding: 8px 15px;
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+            border-radius: 5px;
+        }
 
-  </style>
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .show {
+            display: block;
+        }
+
+        .btn-light {
+            font-size: 20px;
+            border: none;
+            background: none;
+            cursor: pointer;
+        }
+
+        #updateForm {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            width: 90%;
+            z-index: 1000;
+        }
+
+        #updateForm::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        #updateForm form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: relative;
+            z-index: 1001;
+        }
+
+        #updateForm input[type="text"],
+        #updateForm textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: #fff;
+            position: relative;
+            z-index: 1001;
+        }
+
+        #updateForm textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        #updateForm button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            position: relative;
+            z-index: 1001;
+        }
+
+        #updateForm button:hover {
+            background-color: #0056b3;
+        }
+
+        #updateForm .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+        .list-group-item {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            display: block !important; /* Bootstrapтын flex'ин жокко чыгарабыз */
+            max-width: 100%;
+            word-wrap: break-word;
+        }
+
+        #com-1 {
+            display: block;
+            width: auto;
+
+        }
+
+        .col-1 strong {
+            font-size: 16px;
+            color: #007bff;
+        }
+
+        .col-1 span {
+            font-size: 14px;
+            color: #555;
+            white-space: normal !important; /* Bootstrapтын nowrap'ын жокко чыгарабыз */
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
+            display: block;
+        }
+
+        .col-1 span:last-child {
+            font-size: 12px;
+            color: #888;
+        }
+
+        button {
+            border: none;
+            padding: 5px 10px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        .btn-outline-danger {
+            background: none;
+            border: 1px solid #dc3545;
+            color: #dc3545;
+        }
+
+        .btn-outline-danger:hover {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        .btn-sm {
+            margin-top: 10px;
+        }
+
+        form {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+
+    </style>
 </head>
 <body>
 
 <div class="container">
-  <div class="buttons-deletedANdBack">
+    <div class="buttons-deletedANdBack">
 
-    <a th:href="@{/users/profile/{id}(id=${userId})}" class="btn btn-secondary mb-3">Back to Profile</a>
+        <a th:href="@{/users/profile/{id}(id=${userId})}" class="btn btn-secondary mb-3">Back to Profile</a>
 
-    <div class="action-menu">
-      <button onclick="toggleMenu()" class="btn btn-light">&#8942;</button>
-      <div id="dropdownMenu" class="dropdown-content">
-        <a href="#" onclick="showUpdateForm()">Update Post</a>
-        <form class="delete" th:action="@{/post/delete/{id}(id=${post.id})}" method="post"
-              onsubmit="return confirm('Are you sure you want to delete this post?');">
-          <button type="submit" class="btn btn-danger">Delete Post</button>
+        <div class="action-menu">
+            <button onclick="toggleMenu()" class="btn btn-light">&#8942;</button>
+            <div id="dropdownMenu" class="dropdown-content">
+                <a href="#" onclick="showUpdateForm()">Update Post</a>
+                <form class="delete" th:action="@{/post/delete/{id}(id=${post.id})}" method="post"
+                      onsubmit="return confirm('Are you sure you want to delete this post?');">
+                    <button type="submit" class="btn btn-danger">Delete Post</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Update Post формасы -->
+        <div id="updateForm" style="display: none; margin-top: 20px;">
+            <form th:action="@{/post/update/{id}(id=${post.id})}" method="post">
+                <input type="text" name="title" placeholder="New Title" th:value="${post.title}" required>
+                <textarea name="description" placeholder="New Description" required
+                          th:text="${post.description}"></textarea>
+                <button type="submit" class="btn btn-primary">Update</button>
+            </form>
+        </div>
+    </div>
+
+
+    <div class="card">
+        <div th:if="${post?.images != null and post?.images?.size() > 0}">
+            <img th:src="@{${post?.images[0]?.imageUrl}}" class="post-image" alt="Post Image">
+        </div>
+        <div class="card-body">
+            <h2 th:text="${post?.title}"></h2>
+            <p th:text="${post?.description}"></p>
+            <p><small th:text="${post?.createdAt}"></small></p>
+            <!-- Лайк баскычы -->
+            <form th:action="@{/post/{postId}/like(postId=${post?.id})}" method="post">
+                <button type="submit">
+                    &#10084;&#65039; <span th:text="${post?.likes?.size()}"></span> Likes
+                </button>
+            </form>
+            <!-- Tagged Users -->
+            <h5 th:if="${post?.taggedUsers != null and not #lists?.isEmpty(post?.taggedUsers)}">Tagged Users:</h5>
+            <ul class="list-group" th:if="${post?.taggedUsers}">
+                <li class="list-group-item d-flex justify-content-between align-items-center"
+                    th:each="user : ${post?.taggedUsers}">
+                    <span th:text="${user?.username}"></span>
+                    <form th:action="'/post/removeTag/'+${post?.id}+'/'+${user?.id}" method="post">
+                        <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                    </form>
+                </li>
+            </ul>
+
+
+        </div>
+    </div>
+
+    <!-- Комментарийлер -->
+    <div class="mt-4">
+        <h4>Comments</h4>
+        <ul class="list-group">
+            <li class="list-group-item" th:each="comment : ${comments}">
+                <div th:if="${comment?.user?.username != null}">
+
+                    <div class="col-1" id="com-1">
+                        <strong th:text="${comment?.user?.username ?: 'N/A'}"></strong>
+                        <span th:text="${comment?.commentText ?: 'No Comment'}"></span>
+                        <span th:text="${comment?.createdAt ?: 'Unknown Date'}"></span>
+                    </div>
+
+
+                    <!-- Лайк баскычы -->
+                    <form th:action="@{/post/comment/{commentId}/like(commentId=${comment?.id})}" method="post">
+                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                            &#10084;&#65039; <span th:text="${comment?.likes?.size() ?: 0}"></span>
+                        </button>
+                    </form>
+                </div>
+                <!-- Delete Comment (Эгер активдүү колдонуучу комментарийдин ээси болсо гана көрсөтүлөт) -->
+                <form th:if="${userId == comment?.user?.id}"
+                      th:action="@{/post/comment/{commentId}/delete(commentId=${comment?.id})}"
+                      method="post"
+                      style="display:inline;">
+                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                        &#128465; Delete
+                    </button>
+                </form>
+            </li>
+        </ul>
+
+
+        <!-- Жаңы комментарий кошуу -->
+        <form th:action="@{/post/{id}/comment(id=${post?.id})}" method="post">
+            <div class="mb-3">
+                <label for="commentText" class="form-label">Add a comment</label>
+                <input type="text" class="form-control" id="commentText" name="commentText"
+                       placeholder="Write a comment..." required>
+            </div>
+            <button type="submit" class="btn btn-primary">Comment</button>
         </form>
-      </div>
     </div>
-
-    <!-- Update Post формасы -->
-    <div id="updateForm" style="display: none; margin-top: 20px;">
-      <form th:action="@{/post/update/{id}(id=${post.id})}" method="post">
-        <input type="text" name="title" placeholder="New Title" th:value="${post.title}" required>
-        <textarea name="description" placeholder="New Description" required th:text="${post.description}"></textarea>
-        <button type="submit" class="btn btn-primary">Update</button>
-      </form>
-    </div>
-  </div>
-
-
-
-
-  <div class="card">
-    <div th:if="${post?.images != null and post?.images?.size() > 0}">
-      <img th:src="@{${post?.images[0]?.imageUrl}}" class="post-image" alt="Post Image">
-    </div>
-    <div class="card-body">
-      <h2 th:text="${post?.title}"></h2>
-      <p th:text="${post?.description}"></p>
-      <p><small th:text="${post?.createdAt}"></small></p>
-      <!-- Лайк баскычы -->
-      <form th:action="@{/post/{postId}/like(postId=${post?.id})}" method="post">
-        <button type="submit">
-          &#10084;&#65039;  <span th:text="${post?.likes?.size()}"></span> Likes
-        </button>
-      </form>
-      <!-- Tagged Users -->
-      <h5 th:if="${post?.taggedUsers != null and not #lists?.isEmpty(post?.taggedUsers)}">Tagged Users:</h5>
-      <ul class="list-group" th:if="${post?.taggedUsers}">
-        <li class="list-group-item d-flex justify-content-between align-items-center"
-            th:each="user : ${post?.taggedUsers}">
-          <span th:text="${user?.username}"></span>
-          <form th:action="'/post/removeTag/'+${post?.id}+'/'+${user?.id}" method="post">
-            <button type="submit" class="btn btn-danger btn-sm">Remove</button>
-          </form>
-        </li>
-      </ul>
-
-
-    </div>
-  </div>
-
-  <!-- Комментарийлер -->
-  <div class="mt-4">
-    <h4>Comments</h4>
-    <ul class="list-group">
-      <li class="list-group-item" th:each="comment : ${comments}">
-        <strong th:text="${comment?.user?.username ?: 'N/A'}"></strong>
-        <span th:text="${comment?.commentText ?: 'No Comment'}"></span>
-        <span th:text="${comment?.createdAt ?: 'Unknown Date'}"></span>
-
-        <!-- Лайк баскычы -->
-        <form th:action="@{/post/comment/{commentId}/like(commentId=${comment?.id})}" method="post">
-          <button type="submit" class="btn btn-outline-danger btn-sm">
-            &#10084;&#65039; <span th:text="${comment?.likes?.size() ?: 0}"></span>
-          </button>
-        </form>
-
-        <!-- Delete Comment (Эгер активдүү колдонуучу комментарийдин ээси болсо гана көрсөтүлөт) -->
-        <form th:if="${userId == comment?.user?.id}"
-              th:action="@{/post/comment/{commentId}/delete(commentId=${comment?.id})}"
-              method="post"
-              style="display:inline;">
-          <button type="submit" class="btn btn-outline-danger btn-sm">
-            &#128465; Delete
-          </button>
-        </form>
-      </li>
-    </ul>
-
-
-    <!-- Жаңы комментарий кошуу -->
-    <form th:action="@{/post/{id}/comment(id=${post?.id})}" method="post">
-      <div class="mb-3">
-        <label for="commentText" class="form-label">Add a comment</label>
-        <input type="text" class="form-control" id="commentText" name="commentText" placeholder="Write a comment..." required>
-      </div>
-      <button type="submit" class="btn btn-primary">Comment</button>
-    </form>
-  </div>
 </div>
 <script>
-  function toggleMenu() {
-    document.getElementById("dropdownMenu").classList.toggle("show");
-  }
-
-  function showUpdateForm() {
-    document.getElementById("updateForm").style.display = "block";
-  }
-
-  window.onclick = function (event) {
-    if (!event.target.matches('.btn-light')) {
-      let dropdowns = document.getElementsByClassName("dropdown-content");
-      for (let i = 0; i < dropdowns.length; i++) {
-        let openDropdown = dropdowns[i];
-        if (openDropdown.classList.contains('show')) {
-          openDropdown.classList.remove('show');
-        }
-      }
+    function toggleMenu() {
+        document.getElementById("dropdownMenu").classList.toggle("show");
     }
-  };
+
+    function showUpdateForm() {
+        document.getElementById("updateForm").style.display = "block";
+    }
+
+    window.onclick = function (event) {
+        if (!event.target.matches('.btn-light')) {
+            let dropdowns = document.getElementsByClassName("dropdown-content");
+            for (let i = 0; i < dropdowns.length; i++) {
+                let openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+            }
+        }
+    };
 </script>
 </body>
 </html>

@@ -145,6 +145,7 @@ public class PostController {
     @GetMapping("/{id}/allPosts")
     public String getPostsById(@PathVariable Long id, Model model) {
         getAllPost(id, model);
+        model.addAttribute("user_Id", currentUser().getId());
         return "post/allOnePost";
     }
 
@@ -188,8 +189,8 @@ public class PostController {
 
         }
 
-        List<User> usersList = (List<User>) session.getAttribute("findUsers");
-        model.addAttribute("findUsers", usersList);
+        List<User> findUsers = (List<User>) session.getAttribute("findUsers");
+        model.addAttribute("findUsers", findUsers);
         model.addAttribute("userList", userList);
         return "post/addPost";
     }
@@ -202,7 +203,6 @@ public class PostController {
 
             search1 = userService.search(search);
         }
-
         session.setAttribute("findUsers", search1);
         return "redirect:/post/add/" + id;
     }
@@ -215,6 +215,16 @@ public class PostController {
             userIds = new ArrayList<>();
         }
         userIds.add(userId);
+        session.setAttribute("usersId", userIds);
+        session.removeAttribute("findUsers");
+        return "redirect:/post/add/" + id;
+    }
+
+    @PostMapping("/removeTaggedUser/{userId}")
+    public String removeTaggedUser(HttpSession session, @PathVariable("userId") Long userId) {
+        List<Long> userIds = (List<Long>) session.getAttribute("usersId");
+        Long id = (Long) session.getAttribute("current");
+        userIds.remove(userId);
         session.setAttribute("usersId", userIds);
         return "redirect:/post/add/" + id;
     }
@@ -235,6 +245,8 @@ public class PostController {
         post.setUser(currentUser);
         post.getImages().add(imageUrl);
         postService.savePost(post, currentUser.getId(), imageUrl,taggedUsers);
+        session.removeAttribute("usersId");
+        session.removeAttribute("findUsers");
         return "redirect:/users/profile/" + currentUser.getId();
     }
 
@@ -268,19 +280,6 @@ public class PostController {
 
         return "post/allPosts";
     }
-    @PostMapping("/removeTag/{postId}/{userId}")
-    @Transactional
-    public String removeTaggedUser(@PathVariable Long postId, @PathVariable Long userId) {
-        Post post = postService.getPostById(postId);
-        User user = userService.getUserById(userId);
-
-        if (post != null && user != null) {
-            post.getTaggedUsers().remove(user);
-            postService.save(post);
-        }
-
-        return "redirect:/post/" + postId;
-    }
 
     @PostMapping("/delete/{postId}")
     public String deletePost(@PathVariable Long postId) {
@@ -301,8 +300,19 @@ public class PostController {
         return "redirect:/post/" + post.getId();
 
     }
+    @PostMapping("/removeTag/{postId}/{userId}")
+    @Transactional
+    public String removeTaggedUser(@PathVariable Long postId, @PathVariable Long userId) {
+        Post post = postService.getPostById(postId);
+        User user = userService.getUserById(userId);
 
+        if (post != null && user != null) {
+            post.getTaggedUsers().remove(user);
+            postService.save(post);
+        }
 
+        return "redirect:/post/" + postId;
+    }
 
 
 

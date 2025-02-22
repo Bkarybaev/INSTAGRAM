@@ -1,5 +1,6 @@
 package instagram.controller;
 
+import instagram.exeptions.NullabelExeption;
 import instagram.models.*;
 import instagram.repository.impl.UserRepoImpl;
 import instagram.service.ImageService;
@@ -103,44 +104,57 @@ public class UserController {
         model.addAttribute("query", "");
         return "userInfo/search";
     }
-//private String queryP = null;
-//    @GetMapping("/search")
-//    public String search(@ModelAttribute("query") String query, Model model) {
-//        List<User> users = userService.search(query);
-////        queryP = query;
-//        List<Long> subscribes = new ArrayList<>();
-//        for (int i = 0; i < users.size(); i++) {
-//            subscribes = users.get(i).getFollower().getSubscribes();
-//        }
-//        boolean isSubscribed = false;
-//        for (Long id : subscribes) {
-//            if (currentUser().getId().equals(id)) {
-//                isSubscribed = true;
-//                break;
-//            }
-//        }
-//
-//        model.addAttribute("isSubscribed", isSubscribed);
-//        model.addAttribute("users", users);
-//        return users+"/subscribeSearch";
-//    }
     @PostMapping("/subscribeSearch")
-    public String subscribeSearch(@ModelAttribute("query") String query, Model model) {
+    public String subscribeSearch(@RequestParam("query") String query, Model model) {
         User currentUser = currentUser();
-//        User profileUser = userService.getUserById(userId);
-//        userService.saveUserFollower(currentUser, profileUser);
         List<User> users = userService.search(query);
+
+
         Map<Long, Boolean> isSubscribedMap = new HashMap<>();
         for (User user : users) {
             boolean isSubscribed = userService.isUserSubscribed(currentUser, user);
             isSubscribedMap.put(user.getId(), isSubscribed);
         }
+
         model.addAttribute("users", users);
         model.addAttribute("isSubscribedMap", isSubscribedMap);
+        model.addAttribute("query", query);
+        return "userInfo/search";
+    }
+
+    @PostMapping("/{id}/subscribeSearchId")
+    public String subscribeSearchId(@PathVariable Long id, @RequestParam(value = "query", required = false) String query, Model model) {
+        if (query == null || query.trim().isEmpty()) {
+            throw new NullabelExeption("Query cannot be empty");
+        }
+
+        User currentUser = currentUser();
+        User profileUser = userService.getUserById(id);
+
+        userService.saveUserFollower(currentUser, profileUser);
+
+        List<User> users = userService.search(query);
+
+        Map<Long, Boolean> isSubscribedMap = new HashMap<>();
+        for (User user : users) {
+            boolean isSubscribed = userService.isUserSubscribed(currentUser, user);
+            isSubscribedMap.put(user.getId(), isSubscribed);
+        }
+
+        model.addAttribute("users", users);
+        model.addAttribute("isSubscribedMap", isSubscribedMap);
+        model.addAttribute("query", query);
 
         return "userInfo/search";
     }
 
+    @PostMapping("/{userId}/subscribe")
+    public String subscribe(@PathVariable Long userId) {
+        User currentUser = currentUser();
+        User profileUser = userService.getUserById(userId);
+        userService.saveUserFollower(currentUser, profileUser);
+        return "redirect:/users/searchUserProfile/" + userId;
+    }
     @GetMapping("/searchUserProfile/{userProfileId}")
     @Transactional
     public String searchUserProfile(@PathVariable("userProfileId") Long userId, Model model) {
@@ -204,13 +218,7 @@ public class UserController {
         return "redirect:/users/profile/" + id;
     }
 
-    @PostMapping("/{userId}/subscribe")
-    public String subscribe(@PathVariable Long userId) {
-        User currentUser = currentUser();
-        User profileUser = userService.getUserById(userId);
-        userService.saveUserFollower(currentUser, profileUser);
-        return "redirect:/users/searchUserProfile/" + userId;
-    }
+
 
 
 
