@@ -3,10 +3,7 @@ package instagram.controller;
 import instagram.exeptions.NullabelExeption;
 import instagram.models.*;
 import instagram.repository.impl.UserRepoImpl;
-import instagram.service.ImageService;
-import instagram.service.PostService;
-import instagram.service.UserInfoService;
-import instagram.service.UserService;
+import instagram.service.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -24,6 +21,7 @@ public class UserController {
     private final UserService userService;
     private final PostService postService;
     private final UserInfoService userInfoService;
+    private final SmsService smsService;
 
     public User currentUser() {
         User user = userService.getUserById(UserRepoImpl.user.getId());
@@ -55,7 +53,7 @@ public class UserController {
         List<User> followersList = userService.getUsersByIds(user.getFollower().getSubscribes());
 
         List<User> followingList = userService.getUsersByIds(user.getFollower().getSubscriptions());
-
+        int unreadMessagesCount = smsService.countUnreadMessages(currentUser());
         model.addAttribute("query", "");
         model.addAttribute("user", user);
         model.addAttribute("userInfo", userInfo);
@@ -65,7 +63,7 @@ public class UserController {
         model.addAttribute("currentUser", currentUser);
         model.addAttribute("followersList", followersList);
         model.addAttribute("followingList", followingList);
-
+        model.addAttribute("unreadMessagesCount", unreadMessagesCount);
         return "userInfo/userProfile";
     }
 
@@ -104,6 +102,7 @@ public class UserController {
         model.addAttribute("query", "");
         return "userInfo/search";
     }
+
     @PostMapping("/subscribeSearch")
     public String subscribeSearch(@RequestParam("query") String query, Model model) {
         User currentUser = currentUser();
@@ -155,6 +154,7 @@ public class UserController {
         userService.saveUserFollower(currentUser, profileUser);
         return "redirect:/users/searchUserProfile/" + userId;
     }
+
     @GetMapping("/searchUserProfile/{userProfileId}")
     @Transactional
     public String searchUserProfile(@PathVariable("userProfileId") Long userId, Model model) {
@@ -217,14 +217,6 @@ public class UserController {
         }
         return "redirect:/users/profile/" + id;
     }
-
-
-
-
-
-
-
-
 
 
 }

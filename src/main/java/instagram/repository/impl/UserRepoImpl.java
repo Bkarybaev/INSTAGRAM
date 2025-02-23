@@ -51,7 +51,7 @@ public class UserRepoImpl implements UserRepo {
             user.setFollower(follower);
             follower.setUser(user);
             userInfo.setUser(user);
-            userInfo.setImageUrl("https://cdn.vectorstock.com/i/1000v/66/13/default-avatar-profile-icon-social-media-user-vector-49816613.jpg");
+            userInfo.setImageUrl("https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3467.jpg");
             entityManager.persist(user);
             user1 = entityManager.createQuery("select u from User u where u.email = :email",User.class)
                     .setParameter("email",user.getEmail())

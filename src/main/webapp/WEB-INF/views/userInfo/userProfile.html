@@ -158,10 +158,19 @@
         </form>
     </div>
 
-<!--    artka ketuu log in bolup-->
     <div style="position: absolute; top: 20px; right: 300px;">
         <a href="/" class="btn btn-primary">Log-in</a>
     </div>
+    <a href="/sms/getUsers" class="see-all-btn" style="position: relative;">
+        Sms
+        <span th:if="${unreadMessagesCount > 0}"
+              th:text="${unreadMessagesCount}"
+              style="position: absolute; top: -10px; right: -10px;
+              background: red; color: white; font-size: 12px;
+              padding: 3px 6px; border-radius: 50%;">
+    </span>
+    </a>
+
 
     <div class="see-all-container">
         <a href="/post/all" class="see-all-btn">See All Posts</a>
@@ -254,15 +263,5 @@
     </div>
 
 </div>
-<script>
-    // let a = document.getElementById("query");
-    // a.addEventListener("click", function () {
-    //     let b = document.createElement("a");
-    //     b.setAttribute("href", "/users/search?query=null")
-    //     b.click()
-    // })
-
-
-</script>
 </body>
 </html>
