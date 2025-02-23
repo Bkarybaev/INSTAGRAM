@@ -53,17 +53,7 @@ public class PostRepoImpl implements PostRepo {
                 .setParameter("description", post.getDescription())
                 .getSingleResult();
 
-        if (taggedUsers != null) {
-            singleResult.setTaggedUsers(taggedUsers);
-            for (User taggedUser : taggedUsers) {
-                if (taggedUser.getTaggedPosts() == null || taggedUser.getTaggedPosts().isEmpty()) {
-                    taggedUser.setTaggedPosts(new ArrayList<>());
-                }
-                taggedUser.getTaggedPosts().add(post);
-                em.merge(taggedUser);
-            }
-        em.merge(singleResult);
-        }
+
 
 
         em.createNativeQuery("""
@@ -90,6 +80,17 @@ public class PostRepoImpl implements PostRepo {
         }
         em.persist(comment);
         em.persist(like);
+        if (taggedUsers != null) {
+            singleResult.setTaggedUsers(taggedUsers);
+            for (User taggedUser : taggedUsers) {
+                if (taggedUser.getTaggedPosts() == null || taggedUser.getTaggedPosts().isEmpty()) {
+                    taggedUser.setTaggedPosts(new ArrayList<>());
+                }
+                taggedUser.getTaggedPosts().add(post);
+                em.merge(taggedUser);
+            }
+            em.merge(singleResult);
+        }
 
     }
 

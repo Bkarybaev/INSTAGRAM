@@ -83,7 +83,7 @@
                 </form>
                 </div>
                 <!-- Delete Comment (Эгер активдүү колдонуучу комментарийдин ээси болсо гана көрсөтүлөт) -->
-                <form th:if="${userId == comment?.user?.id}"
+                <form th:if="${user_Id == comment?.user?.id}"
                       th:action="@{/post/commentDeleted/{commentId}/delete(commentId=${comment?.id})}"
                       method="post"
                       style="display:inline;">
