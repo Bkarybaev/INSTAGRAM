@@ -51,7 +51,7 @@
             padding: 10px;
             display: flex;
             gap: 10px;
-            background: #ddd;
+            background: linear-gradient(45deg, #A685D6, #E57AA5, #FA8072, #FDB462);
             text-align: center;
         }
 
@@ -89,7 +89,7 @@
 </head>
 <body>
 <div class="container">
-    <div style="position: absolute; top: 40px; right: 120px;">
+    <div style="position: absolute; top: 40px; right: 100px;">
         <a th:href="@{/users/myProfile}">
             <img th:src="${userInfoProf?.imageUrl}" alt="Profile"
                  style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #e1306c; object-fit: cover;">

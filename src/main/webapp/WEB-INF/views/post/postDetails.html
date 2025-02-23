@@ -13,17 +13,17 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 600px;
             margin: auto;
             padding: 20px;
         }
-
         .post-image {
-            width: 100%;
-            height: 400px;
-            object-fit: cover;
-            border-radius: 10px;
+            width: 100%; /* Контейнерге жараша толук чыгышы үчүн */
+            max-height: 400px; /* Максималдуу бийиктигин чоңойттук */
+            display: block; /* Туура жайгаштыруу үчүн */
+            margin: 0 auto; /* Борборго жайгаштыруу */
         }
+
 
         .buttons-deletedANdBack {
             display: flex;
@@ -300,7 +300,7 @@
             <ul class="list-group" th:if="${post?.taggedUsers}">
                 <li class="list-group-item d-flex justify-content-between align-items-center"
                     th:each="user : ${post?.taggedUsers}">
-                    <span th:text="${user?.username}"></span>
+                    <span style="cursor: pointer; color: #66A2E0;"   th:onclick="'window.location.href=\'/users/searchUserProfile/'+${user.id}+'\''" th:text="${user?.username}"></span>
                     <form th:action="'/post/removeTag/'+${post?.id}+'/'+${user?.id}" method="post">
                         <button type="submit" class="btn btn-danger btn-sm">Remove</button>
                     </form>
@@ -313,17 +313,13 @@
 
     <!-- Комментарийлер -->
     <div class="mt-4">
-        <h4>Comments</h4>
-        <ul class="list-group">
+        <h4 id="commentsToggle" style="cursor: pointer;">Comments &#x2B07;&#xFE0F;</h4>
+        <ul class="list-group comment-section">
             <li class="list-group-item" th:each="comment : ${comments}">
                 <div th:if="${comment?.user?.username != null}">
-
-                    <div class="col-1" id="com-1">
-                        <strong th:text="${comment?.user?.username ?: 'N/A'}"></strong>
-                        <span th:text="${comment?.commentText ?: 'No Comment'}"></span>
-                        <span th:text="${comment?.createdAt ?: 'Unknown Date'}"></span>
-                    </div>
-
+                    <strong th:text="${comment?.user?.username ?: 'N/A'}"></strong>
+                    <span th:text="${comment?.commentText ?: 'No Comment'}"></span>
+                    <span th:text="${comment?.createdAt ?: 'Unknown Date'}"></span>
 
                     <!-- Лайк баскычы -->
                     <form th:action="@{/post/comment/{commentId}/like(commentId=${comment?.id})}" method="post">
@@ -333,7 +329,7 @@
                     </form>
                 </div>
                 <!-- Delete Comment (Эгер активдүү колдонуучу комментарийдин ээси болсо гана көрсөтүлөт) -->
-                <form th:if="${userId == comment?.user?.id}"
+                <form th:if="${currentUser.id == comment?.user?.id}"
                       th:action="@{/post/comment/{commentId}/delete(commentId=${comment?.id})}"
                       method="post"
                       style="display:inline;">
@@ -344,13 +340,11 @@
             </li>
         </ul>
 
-
         <!-- Жаңы комментарий кошуу -->
         <form th:action="@{/post/{id}/comment(id=${post?.id})}" method="post">
             <div class="mb-3">
                 <label for="commentText" class="form-label">Add a comment</label>
-                <input type="text" class="form-control" id="commentText" name="commentText"
-                       placeholder="Write a comment..." required>
+                <input type="text" class="form-control" id="commentText" name="commentText" placeholder="Write a comment..." required>
             </div>
             <button type="submit" class="btn btn-primary">Comment</button>
         </form>
@@ -376,6 +370,29 @@
             }
         }
     };
+        document.addEventListener("DOMContentLoaded", function () {
+        let commentsToggle = document.getElementById("commentsToggle");
+        let commentSections = document.querySelectorAll(".comment-section");
+
+        // Башында комментарийлер жашырылат
+        commentSections.forEach(section => {
+        section.style.maxHeight = "0px";
+        section.style.overflow = "hidden";
+        section.style.transition = "max-height 0.5s ease-in-out";
+    });
+
+        commentsToggle.addEventListener("click", function () {
+        commentSections.forEach(section => {
+        if (section.style.maxHeight === "0px") {
+        section.style.maxHeight = section.scrollHeight + "px";
+        commentsToggle.textContent = "Comments " + String.fromCodePoint(0x2B06, 0xFE0F); // ⬆️
+    } else {
+        section.style.maxHeight = "0px";
+        commentsToggle.textContent = "Comments " + String.fromCodePoint(0x2B07, 0xFE0F); // ⬇️
+    }
+    });
+    });
+    });
 </script>
 </body>
 </html>
