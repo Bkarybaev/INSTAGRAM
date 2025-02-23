@@ -91,8 +91,6 @@ public class SmsController {
         if (sender == null) {
             throw new IllegalArgumentException("Sender not found!");
         }
-
-
         smsService.sendSms(sender, receiver, message);
 
         return "redirect:/sms/chat/" + receiverId;

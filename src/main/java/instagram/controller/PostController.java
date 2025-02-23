@@ -195,17 +195,27 @@ public class PostController {
         return "post/addPost";
     }
 
-    @PostMapping("/searchUserToAddPost")
-    public String searchUserToAddPost(HttpSession session, @ModelAttribute("search") String search) {
-        Long id = (Long) session.getAttribute("current");
-        List<User> search1 = new ArrayList<>();
-        if (search != null) {
+@PostMapping("/searchUserToAddPost")
+public String searchUserToAddPost(HttpSession session, @ModelAttribute("search") String search) {
+    Long id = (Long) session.getAttribute("current");
+    List<User> searchResults = new ArrayList<>();
 
-            search1 = userService.search(search);
-        }
-        session.setAttribute("findUsers", search1);
-        return "redirect:/post/add/" + id;
+    if (search != null && !search.trim().isEmpty()) {
+        searchResults = userService.search(search);
     }
+
+    List<Long> taggedUserIds = (List<Long>) session.getAttribute("usersId");
+
+    if (taggedUserIds != null) {
+        searchResults = searchResults.stream()
+                .filter(user -> !taggedUserIds.contains(user.getId()))
+                .collect(Collectors.toList());
+    }
+
+    session.setAttribute("findUsers", searchResults);
+    return "redirect:/post/add/" + id;
+}
+
 
     @PostMapping("/addUser/{userId}")
     public String addUser(HttpSession session, @PathVariable("userId") Long userId) {
