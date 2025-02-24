@@ -19,9 +19,7 @@
         }
         .post-image {
             width: 100%; /* Контейнерге жараша толук чыгышы үчүн */
-            max-height: 400px; /* Максималдуу бийиктигин чоңойттук */
-            display: block; /* Туура жайгаштыруу үчүн */
-            margin: 0 auto; /* Борборго жайгаштыруу */
+            object-fit: cover;
         }
 
 
@@ -247,7 +245,54 @@
             align-items: center;
             gap: 10px;
         }
+        .like-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: red;
+        }
+        .story-button {
+            padding: 10px 15px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease-in-out;
+            width: 150px;
+            text-align: center;
+        }
 
+        .add-story {
+            background: #28a745; /* Көк-жашыл түс */
+            color: white;
+        }
+
+        .add-story:hover {
+            background: #218838;
+        }
+
+        .remove-story {
+            background: #dc3545; /* Кызыл түс */
+            color: white;
+        }
+
+        .remove-story:hover {
+            background: #c82333;
+        }
+        .arhiv {
+            padding: 10px 15px;
+            background: #007bff; /* Көк түс */
+            color: white;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .likeandarhiv{
+            display: flex;
+            justify-content: space-between;
+        }
 
     </style>
 </head>
@@ -287,14 +332,24 @@
         </div>
         <div class="card-body">
             <h2 th:text="${post?.title}"></h2>
+
             <p th:text="${post?.description}"></p>
             <p><small th:text="${post?.createdAt}"></small></p>
-            <!-- Лайк баскычы -->
-            <form th:action="@{/post/{postId}/like(postId=${post?.id})}" method="post">
-                <button type="submit">
-                    &#10084;&#65039; <span th:text="${post?.likes?.size()}"></span> Likes
-                </button>
-            </form>
+            <div class="likeandarhiv">
+                <!-- Лайк баскычы -->
+                <form th:action="@{/post/{postId}/like(postId=${post?.id})}" method="post">
+                    <button type="submit">
+                        &#10084;&#65039; <span th:text="${post?.likes?.size()}"></span> Likes
+                    </button>
+                </form>
+                <form class="arhiv" th:action="@{/post/storyDetails/add/{id}(id=${post.id})}" method="post">
+                    <button type="submit"
+                            th:class="${isStoryExists ? 'story-button remove-story' : 'story-button add-story'}"
+                            th:text="${isStoryExists ? 'Remove Story' : 'Add Story'}">
+                    </button>
+                </form>
+            </div>
+
             <!-- Tagged Users -->
             <h5 th:if="${post?.taggedUsers != null and not #lists?.isEmpty(post?.taggedUsers)}">Tagged Users:</h5>
             <ul class="list-group" th:if="${post?.taggedUsers}">
@@ -306,7 +361,6 @@
                     </form>
                 </li>
             </ul>
-
 
         </div>
     </div>

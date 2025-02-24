@@ -124,6 +124,22 @@
 
         .see-all-btn {
             display: inline-block;
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+
+        .see-all-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .see-all-btn {
+            display: inline-block;
             background-color: #0095f6;
             color: white;
             padding: 10px 20px;
@@ -145,6 +161,57 @@
         a:hover {
             text-decoration: none;
         }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            min-width: 120px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 8px 12px;
+            text-decoration: none;
+            color: black;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .see-all-btn {
+            display: block;
+            width: 100%;
+        }
+
+        .dots-btn {
+            font-size: 24px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            outline: none;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -1px;
+            background: red;
+            color: white;
+            font-size: 12px;
+            padding: 3px 6px;
+            border-radius: 50%;
+        }
     </style>
 </head>
 <body>
@@ -161,15 +228,16 @@
     <div style="position: absolute; top: 20px; right: 300px;">
         <a href="/" class="btn btn-primary">Log-in</a>
     </div>
-    <a href="/sms/getUsers" class="see-all-btn" style="position: relative;">
-        Sms
-        <span th:if="${unreadMessagesCount > 0}"
-              th:text="${unreadMessagesCount}"
-              style="position: absolute; top: -10px; right: -10px;
-              background: red; color: white; font-size: 12px;
-              padding: 3px 6px; border-radius: 50%;">
-    </span>
-    </a>
+    <div class="dropdown">
+        <button class="dots-btn" onclick="toggleDropdown()">&#8942;</button>
+        <div id="dropdownMenu" class="dropdown-content">
+            <a href="/post/stories" class="see-all-btn">Story</a>
+            <a href="/sms/getUsers" class="see-all-btn" style="position: relative;">
+                Sms
+                <span th:if="${unreadMessagesCount > 0}" th:text="${unreadMessagesCount}" class="notification-badge"></span>
+            </a>
+        </div>
+    </div>
 
 
     <div class="see-all-container">
@@ -263,5 +331,21 @@
     </div>
 
 </div>
+<script>
+    function toggleDropdown() {
+        let dropdown = document.getElementById("dropdownMenu");
+        dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    }
+
+    // Кнопканы баспаса, сыртты басканда жабылат
+    document.addEventListener("click", function(event) {
+        let dropdown = document.getElementById("dropdownMenu");
+        let button = document.querySelector(".dots-btn");
+
+        if (!button.contains(event.target) && !dropdown.contains(event.target)) {
+            dropdown.style.display = "none";
+        }
+    });
+</script>
 </body>
 </html>

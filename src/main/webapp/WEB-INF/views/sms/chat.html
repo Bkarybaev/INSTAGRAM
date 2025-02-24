@@ -39,6 +39,7 @@
             background: #ccc;
         }
 
+
         .chat-container {
             width: 75%;
             display: flex;
@@ -98,16 +99,17 @@
     <div class="sidebar">
         <h3>Users</h3>
         <ul>
-            <li th:each="user : ${users}">
-                <a th:href="@{/sms/chat/{id}(id=${user.id})}"
-                   onclick="removeNotification(this)">
-                    <span th:text="${user.username}"> <span th:if="${unreadMessagesPerUser[user.id] > 0}"
-                                                            th:text="${unreadMessagesPerUser[user.id]}"
-                                                            class="notification-badge"
-                                                            style="
+            <li onclick="removeNotification(this)" th:each="user : ${users}">
+                <a style="position: relative" th:href="@{/sms/chat/{id}(id=${user.id})}"
+                   >
+                    <span th:text="${user.username}"></span> <span th:if="${unreadMessagesPerUser[user.id] > 0}"
+                         th:text="${unreadMessagesPerUser[user.id]}"
+                         class="notification-badge"
+                         style=" position: absolute;top: 5px;
+            right: 1px;
                  background: red; color: white; font-size: 12px;
                  padding: 3px 6px; border-radius: 50%;">
-    </span></span>
+    </span>
 
                 </a>
 

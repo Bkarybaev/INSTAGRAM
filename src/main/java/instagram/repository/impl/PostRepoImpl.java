@@ -86,7 +86,7 @@ public class PostRepoImpl implements PostRepo {
                 if (taggedUser.getTaggedPosts() == null || taggedUser.getTaggedPosts().isEmpty()) {
                     taggedUser.setTaggedPosts(new ArrayList<>());
                 }
-                taggedUser.getTaggedPosts().add(post);
+                taggedUser.getTaggedPosts().add(singleResult);
                 em.merge(taggedUser);
             }
             em.merge(singleResult);
@@ -143,7 +143,7 @@ public class PostRepoImpl implements PostRepo {
 
     @Override
     public List<Post> getAll() {
-        return em.createQuery("select p from Post p", Post.class).getResultList();
+        return em.createQuery("select p from Post p order by p.id desc ,p.createdAt desc ", Post.class).getResultList();
     }
 
     @Override

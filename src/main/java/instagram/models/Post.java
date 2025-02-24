@@ -6,6 +6,7 @@ import lombok.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "posts")
@@ -21,7 +22,9 @@ public class Post {
     private String title;
     private String description;
     private LocalDate createdAt;
-
+    @OneToMany
+    @ToString.Exclude
+    private List<Story> stories;
     @ToString.Exclude
     @OneToMany(mappedBy = "post",cascade = {CascadeType.MERGE,CascadeType.REMOVE},fetch = FetchType.EAGER)
     private List<Comment> comments;
@@ -48,5 +51,18 @@ public class Post {
     @PrePersist @PreUpdate
     protected void onCreate() {
         createdAt = LocalDate.now();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Post post = (Post) o;
+        return Objects.equals(id, post.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

@@ -109,11 +109,12 @@
     <div class="sidebar">
         <h3>Users</h3>
         <ul>
-            <li th:each="user : ${users}">
+            <li onclick="removeNotification(this)" style="position: relative"  th:each="user : ${users}">
                 <a th:href="@{/sms/chat/{id}(id=${user.id})}" th:text="${user.username}"></a>
                 <span th:if="${unreadMessagesPerUser[user.id] > 0}"
                       th:text="${unreadMessagesPerUser[user.id]}"
-                      style="background: red; color: white; font-size: 12px;
+                      class="notification-badge"
+                      style="position: absolute; top: 5px; right: 1px; background: red; color: white; font-size: 12px;
                          padding: 3px 6px; border-radius: 50%; margin-left: 5px;">
             </span>
             </li>
@@ -141,5 +142,13 @@
         </form>
     </div>
 </div>
+<script>
+    function removeNotification(element) {
+        let badge = element.querySelector(".notification-badge");
+        if (badge) {
+            badge.style.display = "none";
+        }
+    }
+</script>
 </body>
 </html>

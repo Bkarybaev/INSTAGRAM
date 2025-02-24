@@ -21,9 +21,8 @@
 
         .post-image {
             width: 100%; /* Контейнерге жараша толук чыгышы үчүн */
-            max-height: 400px; /* Максималдуу бийиктигин чоңойттук */
-            display: block; /* Туура жайгаштыруу үчүн */
-            margin: 0 auto; /* Борборго жайгаштыруу */
+            /*max-height: 400px; !* Максималдуу бийиктигин чоңойттук *!*/
+            object-fit: cover;
         }
 
         .like-btn {
@@ -32,6 +31,50 @@
             font-size: 24px;
             cursor: pointer;
             color: red;
+        }
+
+        .story-button {
+            padding: 10px 15px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease-in-out;
+            width: 150px;
+            text-align: center;
+        }
+
+        .add-story {
+            background: #28a745; /* Көк-жашыл түс */
+            color: white;
+        }
+
+        .add-story:hover {
+            background: #218838;
+        }
+
+        .remove-story {
+            background: #dc3545; /* Кызыл түс */
+            color: white;
+        }
+
+        .remove-story:hover {
+            background: #c82333;
+        }
+
+        .arhiv {
+            padding: 10px 15px;
+            background: #007bff; /* Көк түс */
+            color: white;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .likeandarhiv {
+            display: flex;
+            justify-content: space-between;
         }
     </style>
 </head>
@@ -48,24 +91,37 @@
             <h2 th:text="${post?.title}"></h2>
             <p th:text="${post?.description}"></p>
             <p><small th:text="${post?.createdAt}"></small></p>
-            <!-- Лайк баскычы -->
-            <form th:action="@{/post/{postId}/likeSearch(postId=${post?.id})}" method="post">
-                <button type="submit">
-                    &#10084;&#65039; <span th:text="${post?.likes?.size()}"></span> Likes
-                </button>
-            </form>
+            <div class="likeandarhiv">
+                <!-- Лайк баскычы -->
+                <form th:action="@{/post/{postId}/likeSearch(postId=${post?.id})}" method="post">
+                    <button type="submit">
+                        &#10084;&#65039; <span th:text="${post?.likes?.size()}"></span> Likes
+                    </button>
+                </form>
+                <form class="arhiv" th:action="@{/post/story/toggle/{id}(id=${post.id})}" method="post">
+                    <button type="submit"
+                            th:class="${isStoryExists ? 'story-button remove-story' : 'story-button add-story'}"
+                            th:text="${isStoryExists ? 'Remove Story' : 'Add Story'}">
+                    </button>
+                </form>
+
+            </div>
             <!-- Tagged Users -->
             <h5 th:if="${post?.taggedUsers != null and not #lists?.isEmpty(post?.taggedUsers)}">Tagged Users:</h5>
             <ul class="list-group" th:if="${post?.taggedUsers}">
                 <li class="list-group-item d-flex justify-content-between align-items-center"
                     th:each="user : ${post?.taggedUsers}">
-                    <span style="cursor: pointer; color: #66A2E0;" th:onclick="'window.location.href=\'/users/searchUserProfile/'+${user.id}+'\''" th:text="${user?.username}"></span>
+                    <span style="cursor: pointer; color: #66A2E0;"
+                          th:onclick="'window.location.href=\'/users/searchUserProfile/'+${user.id}+'\''"
+                          th:text="${user?.username}"></span>
                 </li>
             </ul>
 
 
+
         </div>
     </div>
+
 
     <!-- Комментарийлер -->
     <div class="mt-4">
@@ -100,7 +156,8 @@
         <form th:action="@{/post/{postId}/commentSearch(postId=${post.id})}" method="post">
             <div class="mb-3">
                 <label for="commentText" class="form-label">Add a comment</label>
-                <input type="text" class="form-control" id="commentText" name="text" placeholder="Write a comment..." required>
+                <input type="text" class="form-control" id="commentText" name="text" placeholder="Write a comment..."
+                       required>
             </div>
             <button type="submit" class="btn btn-primary">Comment</button>
         </form>

@@ -2,6 +2,7 @@ package instagram.controller;
 
 import instagram.exeptions.NullComent;
 import instagram.models.*;
+import instagram.repository.StoryRepo;
 import instagram.repository.impl.UserInfoRepoImpl;
 import instagram.repository.impl.UserRepoImpl;
 import instagram.service.CommentService;
@@ -17,6 +18,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Array;
+import java.security.Principal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,6 +32,7 @@ public class PostController {
     private final PostService postService;
     private final LikeService likeService;
     private final CommentService commentService;
+    private final StoryRepo storyRepo;
 
     public User currentUser() {
         User user = userService.getUserById(UserRepoImpl.user.getId());
@@ -138,13 +143,19 @@ public class PostController {
 
     @GetMapping("/{id}")
     public String getPostById(@PathVariable Long id, Model model) {
+        Post post = postService.getPostById(id);
         getAllPost(id, model);
+        boolean isStoryExists = storyRepo.isStoryExists(post.getId(), currentUser().getId());
+        model.addAttribute("isStoryExists", isStoryExists);
         return "post/postDetails";
     }
 
     @GetMapping("/{id}/allPosts")
     public String getPostsById(@PathVariable Long id, Model model) {
         getAllPost(id, model);
+        Post post = postService.getPostById(id);
+        boolean isStoryExists = storyRepo.isStoryExists(post.getId(), currentUser().getId());
+        model.addAttribute("isStoryExists", isStoryExists);
         model.addAttribute("user_Id", currentUser().getId());
         return "post/allOnePost";
     }
@@ -165,6 +176,8 @@ public class PostController {
         Post post = postService.getPostById(id);
         List<Comment> comments = commentService.getCommentsByPostId(post.getId());
         Collections.reverse(comments);
+        boolean isStoryExists = storyRepo.isStoryExists(post.getId(), currentUser().getId());
+        model.addAttribute("isStoryExists", isStoryExists);
         model.addAttribute("post", post);
         model.addAttribute("currentUserId", currentUser().getId());
         model.addAttribute("userId", post.getUser().getId());
@@ -249,8 +262,6 @@ public String searchUserToAddPost(HttpSession session, @ModelAttribute("search")
         if (userIds != null) {
              taggedUsers = userService.getUsersByIds(userIds);
         }
-
-
         User currentUser = userService.getUserById(userId);
         post.setUser(currentUser);
         post.getImages().add(imageUrl);
@@ -280,11 +291,9 @@ public String searchUserToAddPost(HttpSession session, @ModelAttribute("search")
     @GetMapping("/all")
     public String getAllPosts(Model model) {
         List<Post> posts = postService.getAll();
-        Collections.reverse(posts);
         Map<User, Map<UserInfo, Follower>> userMapMap1 = userService.userProfile(currentUser().getId());
         UserInfo userInfoProf = userMapMap1.keySet().iterator().next().getUserInfo();
-
-
+//        Collections.reverse(posts);
         model.addAttribute("userInfoProf", userInfoProf);
         model.addAttribute("posts", posts);
 
@@ -294,9 +303,10 @@ public String searchUserToAddPost(HttpSession session, @ModelAttribute("search")
     @PostMapping("/delete/{postId}")
     public String deletePost(@PathVariable Long postId) {
             Post post = postService.getPostById(postId);
-        Long nextPostId = postService.delete(postId);
+            User user = userService.getUserById(post.getUser().getId());
+        Long nextPostId = postService.delete(post.getId());
         if (nextPostId == null || nextPostId == 0 || nextPostId.describeConstable().isEmpty()) {
-            return "redirect:/users/profile/" + post.getUser().getId();
+            return "redirect:/users/profile/" + user.getId();
         }
         return "redirect:/post/" + nextPostId;
     }
@@ -324,6 +334,48 @@ public String searchUserToAddPost(HttpSession session, @ModelAttribute("search")
         return "redirect:/post/" + postId;
     }
 
+@PostMapping("/story/toggle/{id}")
+public String toggleStory(@PathVariable Long id) {
+    User currentUser = currentUser();
+    if (currentUser == null) return "redirect:/main/index";
+
+    Post post = postService.getPostById(id);
+    storyRepo.save(post, currentUser);
+
+    return "redirect:/post/searchUserProf/" + id;
+}
+
+
+
+
+    @PostMapping("/storyAllPost/add/{id}")
+    public String addStoryAllPost(@PathVariable Long id) {
+        User currentUser = currentUser();
+        if (currentUser == null) return "redirect:/main/index";
+        Post post = postService.getPostById(id);
+        storyRepo.save(post,currentUser);
+        return "redirect:/post/" + post.getId() + "/allPosts";
+    }
+    @PostMapping("/storyDetails/add/{id}")
+    public String storyDetails(@PathVariable Long id) {
+        User currentUser = currentUser();
+        if (currentUser == null) return "redirect:/main/index";
+        Post post = postService.getPostById(id);
+        storyRepo.save(post,currentUser);
+        return "redirect:/post/" + post.getId();
+    }
+    @GetMapping("/stories")
+    public String getStories(Model model) {
+        User currentUser = currentUser();
+        if (currentUser == null) return "redirect:/main/index";
+
+        List<Story> stories = storyRepo.findAll();
+        model.addAttribute("stories", stories);
+        Map<User, Map<UserInfo, Follower>> userMapMap1 = userService.userProfile(currentUser().getId());
+        UserInfo userInfoProf = userMapMap1.keySet().iterator().next().getUserInfo();
+        model.addAttribute("userInfoProf", userInfoProf);
+        return "story/story";
+    }
 
 
 }

@@ -55,6 +55,10 @@ public class User{
     orphanRemoval = true)
     private List<Like> likes;
 
+    @ToString.Exclude
+    @OneToMany
+    private List<Story> stories;
+
     public User(String username, String password, String email, String phoneNumber) {
         this.username = username;
         this.password = password;
